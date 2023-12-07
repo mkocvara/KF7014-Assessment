@@ -1,9 +1,10 @@
-using System.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace PrecipitationService.Db
 {
     public class PrecipitationMeasurement
     {
+        [Key]
         required public int Id { get; set; } 
 
         // Location of measurement

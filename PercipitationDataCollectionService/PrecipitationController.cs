@@ -93,15 +93,15 @@ namespace PercipitationService
                 return Problem("Entity set 'PrecipitationDb.Measurements' is null.");
             }
 
-            PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
-            measurement.Id = _dbContext.Measurements.Count() + 1;
+            lock (_dbContext.Measurements)
+            {
+                PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
+                _dbContext.Measurements.Add(measurement);
+            
+                AssessRisk(measurement);
+                measurementDto.Id = measurement.Id;
+            }
 
-            _dbContext.Measurements.Add(measurement);
-            await _dbContext.SaveChangesAsync();
-
-            AssessRisk(measurement);
-
-            measurementDto.Id = measurement.Id;
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
         }
 
