@@ -111,6 +111,8 @@ namespace PercipitationService
             
                 AssessRisk(measurement);
                 measurementDto.Id = measurement.Id;
+
+                _dbContext.SaveChanges();
             }
 
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
