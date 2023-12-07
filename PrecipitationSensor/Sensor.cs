@@ -41,13 +41,19 @@ namespace PrecipitationSensors
         }
 
         /// <summary>
-        /// Get time until next measurement is sent formatted as hh:mm:ss orr mm:ss if 0 hours.
+        /// Get time until next measurement formatted as dd:hh:mm:ss.
         /// </summary>
         /// <returns>Time until the next measurement is sent as a formatted string.</returns>
         public string GetTimeUntilSendAsString()
         {
             TimeSpan timeTo = (_lastDataSentTime + _dataSendInterval) - DateTime.Now;
-            return (timeTo.Hours > 0) ? timeTo.ToString(@"hh\:mm\:ss") : timeTo.ToString(@"mm\:ss");
+
+            string timeFormat = "";
+            timeFormat += (timeTo.Days > 0) ? @"dd\:" : "";
+            timeFormat += (timeTo.Hours > 0) ? @"hh\:" : "";
+            timeFormat += @"mm\:ss";
+
+            return timeTo.ToString(timeFormat);
         }
 
         /// <summary>
