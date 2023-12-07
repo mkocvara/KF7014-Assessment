@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrecipitationService.Db;
-using System.Diagnostics.Metrics;
 
 namespace PercipitationService
 {
@@ -120,7 +119,11 @@ namespace PercipitationService
         private void AssessRisk(PrecipitationMeasurement measurement)
         {
             if (measurement.SevereRisk)
-                Console.WriteLine("===SEVERE WEATHER RISK DETECTED!==="); // TODO consider something more involved
+            {
+                Console.WriteLine("=================================");
+                Console.WriteLine("= SEVERE WEATHER RISK DETECTED! =");
+                Console.WriteLine("=================================");
+            }
         }
     }
 }
