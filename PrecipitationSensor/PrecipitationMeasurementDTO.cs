@@ -32,12 +32,29 @@ namespace PrecipitationSensor
 
             // random number generator
             System.Random random = new System.Random();
-            float randPrecipitationMm = (float)truncTwo(random.NextDouble() % 125.0);
-            float randCoverage = (float)truncTwo(random.NextDouble() % 100.0);
-            float randSnowfall = (random.NextInt64() % 8 == 0) ? (float)truncTwo(random.NextDouble() % 1.0) : 0.0f;
-            testSnowDepth =+ Math.Max(0, randSnowfall - (float)truncTwo(random.NextDouble() % 0.2));
+            float randPrecipitationMm = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 125.0);
+            float randCoverage = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 100.0);
+            float randSnowfall = (random.NextInt64() % 8 == 0) ? (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.0) : 0.0f;
+            testSnowDepth += Math.Max(0, randSnowfall - (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 0.2));
 
-            randPrecipitationMm = (float)(Math.Truncate((double)randPrecipitationMm * 100.0) / 100.0);
+            // torrential rain
+            if (testCounter == 5)
+            {
+                randPrecipitationMm = 70.0f;
+                randCoverage = 10.0f;
+                randSnowfall = 0.0f;
+                testSnowDepth = 0.0f;
+            }
+
+            // heavy snow
+            else if (testCounter == 10)
+            {
+                randPrecipitationMm = 80.0f;
+                randCoverage = 75.0f;
+                randSnowfall = 35.0f;
+                testSnowDepth = 45.0f;
+            }
+
             return new PrecipitationMeasurementDTO(testCounter, "TestLocation" + testCounter++, System.DateTime.Now, randPrecipitationMm, randCoverage, randSnowfall, testSnowDepth);
         }
     }

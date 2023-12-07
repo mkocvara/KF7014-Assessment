@@ -35,6 +35,7 @@ namespace Gateway
 }
 
 /* == TODO ==
-  * Make a service that consumes data and posts them via the gateway
+ * Improve notification for severe weather?
+ * Test all HTTP operations properly
  * Check brief for more
  */

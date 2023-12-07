@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrecipitationService.Db;
+using System.Diagnostics.Metrics;
 
 namespace PercipitationService
 {
@@ -9,9 +10,7 @@ namespace PercipitationService
     public class PrecipitationController : ControllerBase
     {
         private readonly PrecipitationDb _dbContext;
-        //private readonly ILogger<PrecipitationController> _logger;
 
-        //public PrecipitationController(ILogger<PrecipitationController> logger)
         public PrecipitationController(PrecipitationDb dbContext)
         {
             _dbContext = dbContext;
@@ -25,6 +24,7 @@ namespace PercipitationService
             {
                 return NotFound();
             }
+
             return await _dbContext.Measurements.Select(t => new PrecipitationMeasurementDTO(t))
                 .ToListAsync();
         }
@@ -37,6 +37,7 @@ namespace PercipitationService
             {
                 return NotFound();
             }
+
             PrecipitationMeasurement? measurement = await _dbContext.Measurements.FindAsync(id);
 
             if (measurement == null)
@@ -51,31 +52,19 @@ namespace PercipitationService
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
         {
-            PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
-            measurement.Id = id;
-
-            if (id != measurement.Id)
+            if (!MeasurementExists(id))
             {
                 return BadRequest();
             }
 
+            PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
+            measurement.Id = id;
+
             _dbContext.Entry(measurement).State = EntityState.Modified;
 
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MeasurementExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _dbContext.SaveChangesAsync();
+
+            AssessRisk(measurement);
 
             return NoContent();
         }
@@ -90,10 +79,14 @@ namespace PercipitationService
             }
 
             PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
+            measurement.Id = _dbContext.Measurements.Count() + 1;
 
             _dbContext.Measurements.Add(measurement);
             await _dbContext.SaveChangesAsync();
 
+            AssessRisk(measurement);
+
+            measurementDto.Id = measurement.Id;
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
         }
 
@@ -105,7 +98,9 @@ namespace PercipitationService
             {
                 return NotFound();
             }
+
             PrecipitationMeasurement? measurement = await _dbContext.Measurements.FindAsync(id);
+
             if (measurement == null)
             {
                 return NotFound();
@@ -120,6 +115,12 @@ namespace PercipitationService
         private bool MeasurementExists(int id)
         {
             return (_dbContext.Measurements?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private void AssessRisk(PrecipitationMeasurement measurement)
+        {
+            if (measurement.SevereRisk)
+                Console.WriteLine("===SEVERE WEATHER RISK DETECTED!==="); // TODO consider something more involved
         }
     }
 }

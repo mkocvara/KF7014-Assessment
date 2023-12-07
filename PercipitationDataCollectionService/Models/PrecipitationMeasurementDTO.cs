@@ -26,7 +26,7 @@ namespace PrecipitationService.Db
             
         public PrecipitationMeasurement MakePrecipitationMeasurement()
         {
-            return new PrecipitationMeasurement()
+            PrecipitationMeasurement m = new()
             {
                 Id = this.Id,
                 Location = this.Location,
@@ -35,7 +35,10 @@ namespace PrecipitationService.Db
                 Coverage = this.Coverage,
                 Snowfall = this.Snowfall,
                 SnowDepth = this.SnowDepth
-        };
+            };
+
+            m.EvaluateRisk();
+            return m;
         }
     }
 }

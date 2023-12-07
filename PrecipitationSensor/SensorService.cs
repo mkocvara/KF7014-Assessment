@@ -9,7 +9,7 @@ namespace PrecipitationSensor
         
         public static readonly System.Timers.Timer Timer = new System.Timers.Timer(1000);
 
-        private static readonly TimeSpan _dataSendInterval = TimeSpan.FromMinutes(1);
+        private static readonly TimeSpan _dataSendInterval = TimeSpan.FromMinutes(30);
         private static readonly HttpClient _http = new();
 
         public SensorService()
