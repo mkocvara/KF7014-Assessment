@@ -1,0 +1,25 @@
+﻿@page "/"
+@model IndexModel
+@{
+}
+
+<div class="pt-3">
+    <h1 class="display-4">Precipitation Sensor</h1>
+    <div id="measurement-details">
+        <partial name="_MeasurementDetails" model="@Model.SensorService" />
+    </div>
+</div>
+
+<script type="text/javascript">
+    var interval = 1000;
+    setInterval(function () { Update() }, interval);
+
+    function Update() {
+        $("#measurement-details").load("/?handler=NextMeasurement");
+
+        // $.get("/?handler=NextMeasurement", function (response) {
+        //     console.log("Get Second!");
+        //     document.getElementById('measurement-details').innerHTML = response;
+        // });
+    }
+</script>

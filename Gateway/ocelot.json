@@ -1,0 +1,34 @@
+{
+	"Routes": [
+		//Precipitation API
+		{
+			"DownstreamPathTemplate": "/api/Precipitation",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "localhost",
+					"Port": 7212
+				}
+			],
+
+			"UpstreamPathTemplate": "/Precipitation",
+			"UpstreamHttpMethod": [ "GET", "POST" ]
+		},
+		{
+			"DownstreamPathTemplate": "/api/Precipitation/{id}",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "localhost",
+					"Port": 7212
+				}
+			],
+
+			"UpstreamPathTemplate": "/Precipitation/{id}",
+			"UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+		}
+	],
+	"GlobalConfiguration": {
+		"BaseUrl": "http://localhost:7081"
+	}
+}

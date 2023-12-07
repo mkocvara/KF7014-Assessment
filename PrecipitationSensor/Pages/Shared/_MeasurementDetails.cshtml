@@ -1,0 +1,41 @@
+﻿@model SensorService
+@{
+}
+
+@if (Model != null && Model.NextMeasurement != null)
+{
+    <p class="pb-2">Sending next piece of data in: <span id="time-to">@Model.GetTimeUntilSendAsString()</span></p>
+
+    <table class="table table-striped table-sm">
+        <tbody>
+            <tr>
+                <td class="fw-bold">Location</td>
+                <td>@Model.NextMeasurement.Location</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Time of Measurement</td>
+                <td>@Model.NextMeasurement.DateTime</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Precipitation (mm)</td>
+                <td>@Model.NextMeasurement.PrecipitationMm</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Coverage</td>
+                <td>@Model.NextMeasurement.Coverage</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Snowfall</td>
+                <td>@Model.NextMeasurement.Snowfall</td>
+            </tr>
+            <tr>
+                <td class="fw-bold">Snow Depth</td>
+                <td>@Model.NextMeasurement.SnowDepth</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="pb-2">Failed to retreive data.</p>
+}
