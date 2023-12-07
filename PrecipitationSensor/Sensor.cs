@@ -2,6 +2,13 @@
 
 namespace PrecipitationSensors
 {
+    public struct SensorInitData
+    {
+        public string Location { get; set; }
+        public float Interval { get; set; }
+    }
+
+
     public class Sensor
     {
         public PrecipitationMeasurementDTO NextMeasurement = default!;
@@ -27,14 +34,20 @@ namespace PrecipitationSensors
             NewMeasurement();
         }
 
+        // Constructor using SensorInitData
+        public Sensor(SensorInitData initData) 
+            : this(initData.Location, TimeSpan.FromMinutes(initData.Interval))
+        {
+        }
+
         /// <summary>
-        /// Get time until next measurement is sent formatted as mm:ss.
+        /// Get time until next measurement is sent formatted as hh:mm:ss orr mm:ss if 0 hours.
         /// </summary>
         /// <returns>Time until the next measurement is sent as a formatted string.</returns>
         public string GetTimeUntilSendAsString()
         {
             TimeSpan timeTo = (_lastDataSentTime + _dataSendInterval) - DateTime.Now;
-            return timeTo.ToString(@"mm\:ss");
+            return (timeTo.Hours > 0) ? timeTo.ToString(@"hh\:mm\:ss") : timeTo.ToString(@"mm\:ss");
         }
 
         /// <summary>

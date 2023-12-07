@@ -1,0 +1,14 @@
+[
+  {
+    "Location": "Newcastle upon Tyne",
+    "Interval": 1
+  },
+  {
+    "Location": "Sunderland",
+    "Interval": 10
+  },
+  {
+    "Location": "Durham",
+    "Interval": 30
+  }
+]
