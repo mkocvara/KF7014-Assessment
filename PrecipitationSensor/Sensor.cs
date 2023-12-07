@@ -17,7 +17,7 @@ namespace PrecipitationSensors
             _dataSendInterval = interval;
             Location = location;
 
-            Timer = new System.Timers.Timer(interval.TotalMilliseconds);
+            Timer = new System.Timers.Timer(_dataSendInterval.TotalMilliseconds);
             Timer.AutoReset = true;
             Timer.Elapsed += OnIntervalElapsed;
             Timer.Enabled = true;
@@ -44,6 +44,7 @@ namespace PrecipitationSensors
         public void SetDataSendInterval(TimeSpan interval)
         {
             _dataSendInterval = interval;
+            Timer.Interval = _dataSendInterval.TotalMilliseconds;
         }
 
         // Generates the next measurement to be sent.
