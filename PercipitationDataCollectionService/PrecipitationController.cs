@@ -55,29 +55,40 @@ namespace PercipitationService
         }
 
         /// <summary>
-        /// HTTP PUT method for updating a measurement.
+        /// HTTP GET method for retrieving measurement with severe weather risk.
         /// </summary>
-        /// <param name="id">Id of measurement to update.</param>
-        /// <param name="measurementDto">A measurement DTO object containing the new data.</param>
-        /// <returns>HTTP response: 400 if measurement provided id does not exist; 204 otherwise.</returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
+        /// <returns>HTTP response: 404 if resource can't be found; 200 with a List<> of measurement where SevereRisk is true otherwise.</returns>
+        [HttpGet("severe")]
+        public async Task<ActionResult<IEnumerable<PrecipitationMeasurementDTO>>> GetSevereMeasurements()
         {
-            if (!MeasurementExists(id))
+            if (_dbContext.Measurements == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
-            measurement.Id = id;
+            return await _dbContext.Measurements
+                .Where(t => t.SevereRisk)
+                .Select(t => new PrecipitationMeasurementDTO(t))
+                .ToListAsync();
+        }
 
-            _dbContext.Entry(measurement).State = EntityState.Modified;
+        /// <summary>
+        /// HTTP GET method for retrieving measurement from a specific location.
+        /// </summary>
+        /// <param name="location">Location of the measurements to retreive.</param>
+        /// <returns>HTTP response: 404 if resource can't be found; 200 with a List<> of measurement where Location matches the supplied location.</returns>
+        [HttpGet("location/{location}")]
+        public async Task<ActionResult<IEnumerable<PrecipitationMeasurementDTO>>> GetMeasurementsByLocation(string location)
+        {
+            if (_dbContext.Measurements == null)
+            {
+                return NotFound();
+            }
 
-            await _dbContext.SaveChangesAsync();
-
-            AssessRisk(measurement);
-
-            return NoContent();
+            return await _dbContext.Measurements
+                .Where(t => location.Equals(t.Location))  
+                .Select(t => new PrecipitationMeasurementDTO(t))
+                .ToListAsync();
         }
 
         /// <summary>
@@ -103,6 +114,32 @@ namespace PercipitationService
             }
 
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
+        }
+
+        /// <summary>
+        /// HTTP PUT method for updating a measurement.
+        /// </summary>
+        /// <param name="id">Id of measurement to update.</param>
+        /// <param name="measurementDto">A measurement DTO object containing the new data.</param>
+        /// <returns>HTTP response: 400 if measurement provided id does not exist; 204 otherwise.</returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
+        {
+            if (!MeasurementExists(id))
+            {
+                return BadRequest();
+            }
+
+            PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
+            measurement.Id = id;
+
+            _dbContext.Entry(measurement).State = EntityState.Modified;
+
+            await _dbContext.SaveChangesAsync();
+
+            AssessRisk(measurement);
+
+            return NoContent();
         }
 
         /// <summary>

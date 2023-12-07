@@ -26,6 +26,32 @@
 
 			"UpstreamPathTemplate": "/Precipitation/{id}",
 			"UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+		},
+		{
+			"DownstreamPathTemplate": "/api/Precipitation/location/{location}",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "localhost",
+					"Port": 7212
+				}
+			],
+
+			"UpstreamPathTemplate": "/Precipitation/location/{location}",
+			"UpstreamHttpMethod": [ "GET" ]
+		},
+		{
+			"DownstreamPathTemplate": "/api/Precipitation/severe",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "localhost",
+					"Port": 7212
+				}
+			],
+
+			"UpstreamPathTemplate": "/Precipitation/severe",
+			"UpstreamHttpMethod": [ "GET" ]
 		}
 	],
 	"GlobalConfiguration": {
