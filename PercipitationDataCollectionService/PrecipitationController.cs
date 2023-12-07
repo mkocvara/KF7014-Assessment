@@ -121,7 +121,7 @@ namespace PercipitationService
         /// </summary>
         /// <param name="id">Id of measurement to update.</param>
         /// <param name="measurementDto">A measurement DTO object containing the new data.</param>
-        /// <returns>HTTP response: 400 if measurement provided id does not exist; 204 otherwise.</returns>
+        /// <returns>HTTP response: 400 if measurement with the provided id does not exist; 204 otherwise.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
         {
@@ -146,7 +146,7 @@ namespace PercipitationService
         /// HTTP DELETE method for deleting a measurement from the database.
         /// </summary>
         /// <param name="id">The ID of the measurement to delete.</param>
-        /// <returns>HTTP response: 404 if measurement provided id cannot be found; 204 otherwise.</returns>
+        /// <returns>HTTP response: 404 if measurement with the provided id cannot be found; 204 otherwise.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMeasurement(int id)
         {
