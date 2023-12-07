@@ -5,8 +5,8 @@
 
 <div class="pt-3">
     <h1 class="display-4">Precipitation Sensor</h1>
-    <div id="measurement-details">
-        <partial name="_MeasurementDetails" model="@Model.SensorService.Sensors" />
+    <div id="sensors-details">
+        <partial name="_SensorsDetails" model="@Model.SensorService.Sensors" />
     </div>
 </div>
 
@@ -15,10 +15,10 @@
     setInterval(function () { Update() }, interval);
 
     function Update() {
-        $("#measurement-details").load("/?handler=NextMeasurement");
+        $("#sensors-details").load("/?handler=SensorsDetails");
 
-        // $.get("/?handler=NextMeasurement", function (response) {
-        //     console.log("Get Second!");
+        // $.get("/?handler=SensorsDetails", function (response) {
+        //     console.log("Get Sensors Details!");
         //     document.getElementById('measurement-details').innerHTML = response;
         // });
     }

@@ -18,11 +18,11 @@ namespace PrecipitationSensors.Pages
             // Console.WriteLine("OnGet() called!");
         }
 
-        public PartialViewResult OnGetNextMeasurement()
+        // Gets the partial view with details of the sensors
+        public PartialViewResult OnGetSensorsDetails()
         {
-            // Console.WriteLine("OnGetNextMeasurement() called!");
-
-            return Partial("_MeasurementDetails", SensorService.Sensors);
+            // Console.WriteLine("OnGetSensorsDetails() called!");
+            return Partial("_SensorsDetails", SensorService.Sensors);
         }
     }
 }
