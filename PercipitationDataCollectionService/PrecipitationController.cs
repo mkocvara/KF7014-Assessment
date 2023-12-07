@@ -15,7 +15,10 @@ namespace PercipitationService
             _dbContext = dbContext;
         }
 
-        // GET: api/Precipitation
+        /// <summary>
+        /// HTTP GET method for retrieving all measurements.
+        /// </summary>
+        /// <returns>HTTP response: 404 if resource can't be found; 200 with a List<> of all measurements otherwise.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PrecipitationMeasurementDTO>>> GetAllMeasurements()
         {
@@ -28,7 +31,11 @@ namespace PercipitationService
                 .ToListAsync();
         }
 
-        // GET: api/Precipitation/5
+        /// <summary>
+        /// HTTP GET method for retrieving a single measurement.
+        /// </summary>
+        /// <param name="id">Id of the measurement to retrieve.</param>
+        /// <returns>HTTP response: 404 if resource can't be found; 200 with the requested measurement otherwise.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<PrecipitationMeasurementDTO>> GetMeasurement(int id)
         {
@@ -47,7 +54,12 @@ namespace PercipitationService
             return new PrecipitationMeasurementDTO(measurement);
         }
 
-        // PUT: api/Precipitation/5
+        /// <summary>
+        /// HTTP PUT method for updating a measurement.
+        /// </summary>
+        /// <param name="id">Id of measurement to update.</param>
+        /// <param name="measurementDto">A measurement DTO object containing the new data.</param>
+        /// <returns>HTTP response: 400 if measurement provided id does not exist; 204 otherwise.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
         {
@@ -68,7 +80,11 @@ namespace PercipitationService
             return NoContent();
         }
 
-        // POST: api/Precipitation
+        /// <summary>
+        /// HTTP POST method for creating a new measurement and adding it to the database.
+        /// </summary>
+        /// <param name="measurementDto">A measurement DTO object containing the data for creating the new measurement.</param>
+        /// <returns>HTTP response: 200 with the newly created measurement's data, if it was successfully created.</returns>
         [HttpPost]
         public async Task<ActionResult<PrecipitationMeasurementDTO>> PostMeasurement(PrecipitationMeasurementDTO measurementDto)
         {
@@ -89,7 +105,11 @@ namespace PercipitationService
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
         }
 
-        // DELETE: api/Precipitation/5
+        /// <summary>
+        /// HTTP DELETE method for deleting a measurement from the database.
+        /// </summary>
+        /// <param name="id">The ID of the measurement to delete.</param>
+        /// <returns>HTTP response: 404 if measurement provided id cannot be found; 204 otherwise.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMeasurement(int id)
         {
@@ -111,11 +131,13 @@ namespace PercipitationService
             return NoContent();
         }
 
+        // Checks if a measurement with the given ID exists in the database.
         private bool MeasurementExists(int id)
         {
             return (_dbContext.Measurements?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        // Checks if the given measurement represents a weather risk, and prints a warning if it does.
         private void AssessRisk(PrecipitationMeasurement measurement)
         {
             if (measurement.SevereRisk)

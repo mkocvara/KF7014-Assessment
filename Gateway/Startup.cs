@@ -35,6 +35,5 @@ namespace Gateway
 }
 
 /* == TODO ==
- * Comments and docs
  * setInterval or Timeout??
  */

@@ -30,6 +30,9 @@ namespace PrecipitationService.Db
         // Is there a severe weather risk based on the precipitation?
         public bool SevereRisk { get; set; } = false;
 
+        /// <summary>
+        /// Evaluate the risk of severe weather based on the precipitation data and set the SevereRisk property accordingly.
+        /// </summary>
         public void EvaluateRisk()
         {
             // If there is more than 25mm of precipitation in an hour, there is a severe weather risk

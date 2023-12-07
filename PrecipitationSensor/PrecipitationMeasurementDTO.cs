@@ -26,6 +26,7 @@ namespace PrecipitationSensors
             SnowDepth = snowDepth;
         }
 
+        // Creates a measurement with random values for testing purposes
         public static PrecipitationMeasurementDTO GetTestMeasurement()
         {
             Func<double, double> truncTwo = (double d) => Math.Truncate(d * 100.0) / 100.0;

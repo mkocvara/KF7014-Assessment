@@ -24,6 +24,10 @@ namespace PrecipitationService.Db
             SnowDepth = m.SnowDepth;
         }
             
+        /// <summary>
+        /// Creates a PrecipitationMeasurement from this DTO.
+        /// </summary>
+        /// <returns>A PrecipitationMeasurement model instance populated with data from this DTO.</returns>
         public PrecipitationMeasurement MakePrecipitationMeasurement()
         {
             PrecipitationMeasurement m = new()
