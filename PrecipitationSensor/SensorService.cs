@@ -1,55 +1,21 @@
 ﻿using System.Timers;
 
-namespace PrecipitationSensor
+namespace PrecipitationSensors
 {
     public class SensorService
     {
-        public PrecipitationMeasurementDTO NextMeasurement = default!;
-        public DateTime LastDataSentTime;
-        
-        public static readonly System.Timers.Timer Timer = new System.Timers.Timer(1000);
-
-        private static readonly TimeSpan _dataSendInterval = TimeSpan.FromMinutes(30);
-        private static readonly HttpClient _http = new();
+        public List<Sensor> Sensors = new();
 
         public SensorService()
         {
-            NewMeasurement();
+            Sensor s = new Sensor("Newcastle upon Tyne", TimeSpan.FromMinutes(1));
+            Sensors.Add(s);
 
-            Timer.AutoReset = true;
-            Timer.Elapsed += SecondTick;
-            Timer.Enabled = true;
+            s = new Sensor("Sunderland", TimeSpan.FromMinutes(10));
+            Sensors.Add(s);
 
-            _http.BaseAddress = new Uri("https://localhost:7081"); // Gateway URI
-        }
-
-        public string GetTimeUntilSendAsString()
-        {
-            TimeSpan timeTo = (LastDataSentTime + _dataSendInterval) - DateTime.Now;
-            return timeTo.ToString(@"mm\:ss");
-        }
-
-        private void NewMeasurement()
-        {
-            NextMeasurement = PrecipitationMeasurementDTO.GetTestMeasurement();
-            LastDataSentTime = DateTime.Now;
-        }
-
-        private void SecondTick(object? sender, ElapsedEventArgs e)
-        {
-            if (DateTime.Now > LastDataSentTime + _dataSendInterval)
-            {
-                SendData();
-                NewMeasurement();
-            }
-
-            Console.WriteLine("Tick! Time left: " + GetTimeUntilSendAsString());
-        }
-
-        private void SendData()
-        {
-            var response = _http.PostAsJsonAsync("/Precipitation", NextMeasurement)
-                            .ContinueWith((response) => Console.Out.WriteLine("Response received, status code: " + response.Result.StatusCode));
+            s = new Sensor("Durham", TimeSpan.FromMinutes(30));
+            Sensors.Add(s);
         }
     }
 }

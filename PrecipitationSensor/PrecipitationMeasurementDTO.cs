@@ -1,4 +1,4 @@
-namespace PrecipitationSensor
+namespace PrecipitationSensors
 {
     public class PrecipitationMeasurementDTO
     {

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using PrecipitationSensor;
+using PrecipitationSensors;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages().AddRazorPagesOptions(o => 

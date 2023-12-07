@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Reflection;
 
-namespace PrecipitationSensor.Pages
+namespace PrecipitationSensors.Pages
 {
     public class IndexModel : PageModel
     {
@@ -22,7 +22,7 @@ namespace PrecipitationSensor.Pages
         {
             // Console.WriteLine("OnGetNextMeasurement() called!");
 
-            return Partial("_MeasurementDetails", SensorService);
+            return Partial("_MeasurementDetails", SensorService.Sensors);
         }
     }
 }

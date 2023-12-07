@@ -1,41 +1,49 @@
-﻿@model SensorService
+﻿@model List<Sensor>
 @{
 }
 
-@if (Model != null && Model.NextMeasurement != null)
+@foreach (Sensor sensor in Model)
 {
-    <p class="pb-2">Sending next piece of data in: <span id="time-to">@Model.GetTimeUntilSendAsString()</span></p>
+    int counter = 1;
+    if (sensor != null && sensor.NextMeasurement != null)
+    {
+        <div class="pb-3 ">
+            <h3>Sensor @counter</h3>
+            <p class="pb-1">Sending next piece of data in: <span id="time-to">@sensor.GetTimeUntilSendAsString()</span></p>
 
-    <table class="table table-striped table-sm">
-        <tbody>
-            <tr>
-                <td class="fw-bold">Location</td>
-                <td>@Model.NextMeasurement.Location</td>
-            </tr>
-            <tr>
-                <td class="fw-bold">Time of Measurement</td>
-                <td>@Model.NextMeasurement.DateTime</td>
-            </tr>
-            <tr>
-                <td class="fw-bold">Precipitation (mm)</td>
-                <td>@Model.NextMeasurement.PrecipitationMm</td>
-            </tr>
-            <tr>
-                <td class="fw-bold">Coverage</td>
-                <td>@Model.NextMeasurement.Coverage</td>
-            </tr>
-            <tr>
-                <td class="fw-bold">Snowfall</td>
-                <td>@Model.NextMeasurement.Snowfall</td>
-            </tr>
-            <tr>
-                <td class="fw-bold">Snow Depth</td>
-                <td>@Model.NextMeasurement.SnowDepth</td>
-            </tr>
-        </tbody>
-    </table>
-}
-else
-{
-    <p class="pb-2">Failed to retreive data.</p>
+            <table class="table table-striped table-sm">
+                <tbody>
+                    <tr>
+                        <td class="fw-bold">Location</td>
+                        <td>@sensor.NextMeasurement.Location</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Time of Measurement</td>
+                        <td>@sensor.NextMeasurement.DateTime</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Precipitation (mm)</td>
+                        <td>@sensor.NextMeasurement.PrecipitationMm</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Coverage</td>
+                        <td>@sensor.NextMeasurement.Coverage</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Snowfall</td>
+                        <td>@sensor.NextMeasurement.Snowfall</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Snow Depth</td>
+                        <td>@sensor.NextMeasurement.SnowDepth</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="pb-2">Failed to retreive data.</p>
+    }
+    counter++;
 }

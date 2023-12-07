@@ -35,7 +35,6 @@ namespace Gateway
 }
 
 /* == TODO ==
- * Improve notification for severe weather?
- * Test all HTTP operations properly
- * Check brief for more
+ * More error handling?
+ * Comments and docs
  */
