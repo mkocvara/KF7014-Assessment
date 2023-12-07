@@ -36,7 +36,7 @@ namespace PrecipitationSensors
             float randPrecipitationMm = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 125.0);
             float randCoverage = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 100.0);
             float randSnowfall = (random.NextInt64() % 8 == 0) ? (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.0) : 0.0f;
-            testSnowDepth += Math.Max(0, randSnowfall - (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 0.2));
+            testSnowDepth = Math.Max(0, testSnowDepth + (randSnowfall - (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 0.7f)));
 
             // torrential rain
             if (testCounter == 5)
