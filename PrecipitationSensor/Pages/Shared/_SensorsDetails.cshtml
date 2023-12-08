@@ -2,9 +2,9 @@
 @{
 }
 
+@{int counter = 1;}
 @foreach (Sensor sensor in Model)
 {
-    int counter = 1;
     if (sensor != null && sensor.NextMeasurement != null)
     {
         <div class="pb-3 ">
