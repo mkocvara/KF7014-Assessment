@@ -99,9 +99,16 @@ namespace PercipitationService
         [HttpPost]
         public async Task<ActionResult<PrecipitationMeasurementDTO>> PostMeasurement(PrecipitationMeasurementDTO measurementDto)
         {
+            // Console.WriteLine($"POST: API invoked at {DateTime.Now}..."); // for testing            
+
             if (_dbContext.Measurements == null)
             {
                 return Problem("Entity set 'PrecipitationDb.Measurements' is null.");
+            }
+
+            if(measurementDto == null)
+            {
+                return BadRequest();
             }
 
             PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
@@ -111,7 +118,7 @@ namespace PercipitationService
             {
                 _dbContext.Measurements.Add(measurement);
                 _dbContext.SaveChangesAsync();
-            
+                // Console.WriteLine($"POST: Adding new measurement with id {measurement.Id} to the database..."); // for testing            
             }
             measurementDto.Id = measurement.Id;
 
@@ -127,7 +134,7 @@ namespace PercipitationService
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
         {
-            if (!MeasurementExists(id))
+            if (measurementDto == null || !MeasurementExists(id))
             {
                 return BadRequest();
             }
