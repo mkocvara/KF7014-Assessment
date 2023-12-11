@@ -36,12 +36,12 @@ namespace PrecipitationSensors
                 if (string.IsNullOrEmpty(jsonString))
                     return false;
 
-                IEnumerable<SensorInitData>? initData = JsonSerializer.Deserialize<IEnumerable<SensorInitData>>(jsonString);
+                IEnumerable<Sensor.InitData>? initData = JsonSerializer.Deserialize<IEnumerable<Sensor.InitData>>(jsonString);
 
                 if (initData == null || !initData.Any())
                     return false;
 
-                foreach (SensorInitData data in initData)
+                foreach (Sensor.InitData data in initData)
                 {
                     Sensor s = new(data);
                     Sensors.Add(s);

@@ -2,40 +2,38 @@
 
 namespace PrecipitationSensors
 {
-    public struct SensorInitData
-    {
-        public string Location { get; set; }
-        public float Interval { get; set; }
-    }
-
-
     public class Sensor
     {
-        public PrecipitationMeasurementDTO NextMeasurement = default!;
-        public readonly string Location;
-        public readonly System.Timers.Timer Timer;
+        public struct InitData
+        {
+            public string Location { get; set; }
+            public float Interval { get; set; }
+        }
 
+        public PrecipitationMeasurementDTO NextMeasurement { get => _nextMeasurement; }
+        public readonly string Location;
+
+        private PrecipitationMeasurementDTO _nextMeasurement = default!;
+        private readonly System.Timers.Timer _timer;
         private DateTime _lastDataSentTime;
         private TimeSpan _dataSendInterval = TimeSpan.FromMinutes(1);
-        private static readonly HttpClient _http = new();
+        private static readonly HttpClient _http = new() { BaseAddress = new Uri("https://localhost:7081") }; // Gateway URI
 
         public Sensor(string location, TimeSpan interval)
         {
             _dataSendInterval = interval;
             Location = location;
 
-            Timer = new System.Timers.Timer(_dataSendInterval.TotalMilliseconds);
-            Timer.AutoReset = true;
-            Timer.Elapsed += OnIntervalElapsed;
-            Timer.Enabled = true;
-
-            _http.BaseAddress = new Uri("https://localhost:7081"); // Gateway URI
+            _timer = new System.Timers.Timer(_dataSendInterval.TotalMilliseconds);
+            _timer.AutoReset = true;
+            _timer.Elapsed += OnIntervalElapsed;
+            _timer.Enabled = true;
 
             NewMeasurement();
         }
 
         // Constructor using SensorInitData
-        public Sensor(SensorInitData initData) 
+        public Sensor(InitData initData) 
             : this(initData.Location, TimeSpan.FromMinutes(initData.Interval))
         {
         }
@@ -63,15 +61,15 @@ namespace PrecipitationSensors
         public void SetDataSendInterval(TimeSpan interval)
         {
             _dataSendInterval = interval;
-            Timer.Interval = _dataSendInterval.TotalMilliseconds;
+            _timer.Interval = _dataSendInterval.TotalMilliseconds;
         }
 
         // Generates the next measurement to be sent.
         private void NewMeasurement()
         {
-            NextMeasurement = PrecipitationMeasurementDTO.GetTestMeasurement();
-            NextMeasurement.Location = Location;
-            NextMeasurement.DateTime = DateTime.Now + _dataSendInterval;
+            _nextMeasurement = PrecipitationMeasurementDTO.GetTestMeasurement();
+            _nextMeasurement.Location = Location;
+            _nextMeasurement.DateTime = DateTime.Now + _dataSendInterval;
             _lastDataSentTime = DateTime.Now;
         }
 

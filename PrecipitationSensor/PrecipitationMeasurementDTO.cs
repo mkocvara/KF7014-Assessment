@@ -10,8 +10,8 @@ namespace PrecipitationSensors
         public float? Snowfall { get; set; }
         public float? SnowDepth { get; set; }
 
-        private static int testCounter = 1;
-        private static float testSnowDepth = 0.0f;
+        private static int _testCounter = 1;
+        private static float _testSnowDepth = 0.0f;
 
         public PrecipitationMeasurementDTO() { }
 
@@ -36,27 +36,27 @@ namespace PrecipitationSensors
             float randPrecipitationMm = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 125.0);
             float randCoverage = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 100.0);
             float randSnowfall = (random.NextInt64() % 8 == 0) ? (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.0) : 0.0f;
-            testSnowDepth = Math.Max(0, testSnowDepth + randSnowfall - (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.7f));
+            _testSnowDepth = Math.Max(0, _testSnowDepth + randSnowfall - (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.7f));
 
             // torrential rain
-            if (testCounter == 5)
+            if (_testCounter == 5)
             {
                 randPrecipitationMm = 70.0f;
                 randCoverage = 10.0f;
                 randSnowfall = 0.0f;
-                testSnowDepth = 0.0f;
+                _testSnowDepth = 0.0f;
             }
 
             // heavy snow
-            else if (testCounter == 10)
+            else if (_testCounter == 10)
             {
                 randPrecipitationMm = 80.0f;
                 randCoverage = 75.0f;
                 randSnowfall = 35.0f;
-                testSnowDepth = 45.0f;
+                _testSnowDepth = 45.0f;
             }
 
-            return new PrecipitationMeasurementDTO(0, "TestLocation" + testCounter++, System.DateTime.Now, randPrecipitationMm, randCoverage, randSnowfall, testSnowDepth);
+            return new PrecipitationMeasurementDTO(0, "TestLocation" + _testCounter++, System.DateTime.Now, randPrecipitationMm, randCoverage, randSnowfall, _testSnowDepth);
         }
     }
 }

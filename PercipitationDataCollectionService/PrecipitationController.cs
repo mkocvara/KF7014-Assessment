@@ -22,7 +22,7 @@ namespace PercipitationService
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PrecipitationMeasurementDTO>>> GetAllMeasurements()
         {
-            if (_dbContext.Measurements == null)
+            if (_dbContext == null || _dbContext.Measurements == null)
             {
                 return NotFound();
             }
@@ -39,7 +39,7 @@ namespace PercipitationService
         [HttpGet("{id}")]
         public async Task<ActionResult<PrecipitationMeasurementDTO>> GetMeasurement(int id)
         {
-            if (_dbContext.Measurements == null)
+            if (_dbContext == null || _dbContext.Measurements == null)
             {
                 return NotFound();
             }
@@ -61,7 +61,7 @@ namespace PercipitationService
         [HttpGet("severe")]
         public async Task<ActionResult<IEnumerable<PrecipitationMeasurementDTO>>> GetSevereMeasurements()
         {
-            if (_dbContext.Measurements == null)
+            if (_dbContext == null || _dbContext.Measurements == null)
             {
                 return NotFound();
             }
@@ -80,7 +80,7 @@ namespace PercipitationService
         [HttpGet("location/{location}")]
         public async Task<ActionResult<IEnumerable<PrecipitationMeasurementDTO>>> GetMeasurementsByLocation(string location)
         {
-            if (_dbContext.Measurements == null)
+            if (_dbContext == null || _dbContext.Measurements == null)
             {
                 return NotFound();
             }
@@ -95,7 +95,7 @@ namespace PercipitationService
         /// HTTP POST method for creating a new measurement and adding it to the database.
         /// </summary>
         /// <param name="measurementDto">A measurement DTO object containing the data for creating the new measurement.</param>
-        /// <returns>HTTP response: 200 with the newly created measurement's data, if it was successfully created.</returns>
+        /// <returns>HTTP response: 200 with the newly created measurement's data, if it was successfully created; 400 in case of a bad payload.</returns>
         [HttpPost]
         public async Task<ActionResult<PrecipitationMeasurementDTO>> PostMeasurement(PrecipitationMeasurementDTO measurementDto)
         {
@@ -117,7 +117,7 @@ namespace PercipitationService
             lock (_dbContext.Measurements)
             {
                 _dbContext.Measurements.Add(measurement);
-                _dbContext.SaveChangesAsync();
+                _dbContext.SaveChanges();
                 // Console.WriteLine($"POST: Adding new measurement with id {measurement.Id} to the database..."); // for testing            
             }
             measurementDto.Id = measurement.Id;
@@ -130,13 +130,18 @@ namespace PercipitationService
         /// </summary>
         /// <param name="id">Id of measurement to update.</param>
         /// <param name="measurementDto">A measurement DTO object containing the new data.</param>
-        /// <returns>HTTP response: 400 if measurement with the provided id does not exist; 204 otherwise.</returns>
+        /// <returns>HTTP response: 404 if measurement with the provided id can't be found; 204 otherwise.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMeasurement(int id, PrecipitationMeasurementDTO measurementDto)
         {
-            if (measurementDto == null || !MeasurementExists(id))
+            if (measurementDto == null)
             {
                 return BadRequest();
+            }
+
+            if (!MeasurementExists(id))
+            {   
+                return NotFound();
             }
 
             PrecipitationMeasurement measurement = measurementDto.MakePrecipitationMeasurement();
