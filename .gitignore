@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /PercipitationDataCollectionService/*.db
 *.db
+*.db-shm
+*.db-wal
