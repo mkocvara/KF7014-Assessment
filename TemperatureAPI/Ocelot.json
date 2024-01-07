@@ -1,0 +1,134 @@
+{
+  "Routes": [
+    // API Gateway
+    {
+      "DownstreamPathTemplate": "/api/",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7247
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [
+
+        ],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "UpstreamPathTemplate": "/",
+      "UpstreamHttpMethod": [
+        "GET"
+      ]
+    },
+    // Sensor API
+    {
+      "DownstreamPathTemplate": "/api/Sensor/",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7158
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [
+
+        ],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "UpstreamPathTemplate": "/Sensor/",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Sensor/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7158
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [
+
+        ],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "UpstreamPathTemplate": "/Sensor/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    // Temperature API
+    {
+      "DownstreamPathTemplate": "/api/Temperature",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7256
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [
+
+        ],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "UpstreamPathTemplate": "/Temperature",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Temperature/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7256
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [
+
+        ],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "UpstreamPathTemplate": "/Temperature/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    }
+  ]
+}
