@@ -24,11 +24,17 @@ namespace Gateway
                 app.UseDeveloperExceptionPage(); 
             }
 
-            app.UseRouting(); 
-            app.UseOcelot(); 
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseOcelot();
+
             app.UseEndpoints(endpoints => 
             { 
-                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); }); 
+                endpoints.MapGet("/", async context => {
+                    await context.Response.WriteAsync("Hello World!");
+                    await new HttpClient().GetAsync("https://localhost:7247/Sensor");
+                }); 
             });
         }
     }

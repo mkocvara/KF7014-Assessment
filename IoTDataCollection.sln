@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrecipitationSensors", "PrecipitationSensor\PrecipitationSensors.csproj", "{49F111F3-B698-472E-999F-B7B435D89A68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureAPI", "TemperatureAPI\TemperatureAPI.csproj", "{03E90172-3AB8-4E59-A2BE-EDE8F5A2654E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureAPI.Sensor", "TemperatureAPI.Sensor\TemperatureAPI.Sensor.csproj", "{E7CE5EFF-602D-451F-B7A5-C003BD88C7BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureAPI.Temperature", "TemperatureAPI.Temperature\TemperatureAPI.Temperature.csproj", "{8868442C-83E6-4C2F-AB59-8FB9CCBB2C9B}"
@@ -33,10 +31,6 @@ Global
 		{49F111F3-B698-472E-999F-B7B435D89A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49F111F3-B698-472E-999F-B7B435D89A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49F111F3-B698-472E-999F-B7B435D89A68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03E90172-3AB8-4E59-A2BE-EDE8F5A2654E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03E90172-3AB8-4E59-A2BE-EDE8F5A2654E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03E90172-3AB8-4E59-A2BE-EDE8F5A2654E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03E90172-3AB8-4E59-A2BE-EDE8F5A2654E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7CE5EFF-602D-451F-B7A5-C003BD88C7BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7CE5EFF-602D-451F-B7A5-C003BD88C7BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7CE5EFF-602D-451F-B7A5-C003BD88C7BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
