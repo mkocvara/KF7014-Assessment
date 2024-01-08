@@ -5,8 +5,16 @@ namespace ClientApp.Pages
 {
     public class DashboardModel : PageModel
     {
-        public void OnGet()
+        public string t = "Hello from DashboardModel!";
+
+        public IActionResult OnGet()
         {
+            if (!true /*TODO if user is NOT authenticated*/)
+            {
+                return LocalRedirect("/login");
+            }
+
+            return Page();
         }
     }
 }

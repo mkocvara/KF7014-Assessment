@@ -1,6 +1,16 @@
-﻿@page
+﻿@page "/dashboard"
 @model ClientApp.Pages.DashboardModel
 @{
+    ViewData["Title"] = "Dashboard";
 }
 
-<h1>Dashboard!</h1>
+<h1>Dashboard</h1>
+
+<h2>Precipitation</h2>
+<partial name="_PrecipitationDash" model="Model.t"></partial>
+
+<h2>Temperature</h2>
+<p>TBA</p>
+
+<h2>Humidity</h2>
+<p>TBA</p>
