@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureAPI.Sensor", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureAPI.Temperature", "TemperatureAPI.Temperature\TemperatureAPI.Temperature.csproj", "{8868442C-83E6-4C2F-AB59-8FB9CCBB2C9B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Precipitation", "Precipitation", "{ECD4966F-8EB6-45BE-B362-CADD03925067}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Temperature", "Temperature", "{1666A4EF-4D44-4116-89FE-C3AAA7CED578}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{082093CF-888B-4FAB-BEE5-83B16AFDD3D0} = {ECD4966F-8EB6-45BE-B362-CADD03925067}
+		{49F111F3-B698-472E-999F-B7B435D89A68} = {ECD4966F-8EB6-45BE-B362-CADD03925067}
+		{E7CE5EFF-602D-451F-B7A5-C003BD88C7BA} = {1666A4EF-4D44-4116-89FE-C3AAA7CED578}
+		{8868442C-83E6-4C2F-AB59-8FB9CCBB2C9B} = {1666A4EF-4D44-4116-89FE-C3AAA7CED578}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AA441B36-CE0D-4601-99B2-7FDE0AA1383D}

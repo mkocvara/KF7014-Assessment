@@ -1,4 +1,4 @@
-﻿namespace TemperatureAPI
+﻿namespace Gateway
 {
     public class ApiKeyMiddleware
     {
