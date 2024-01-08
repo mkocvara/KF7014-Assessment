@@ -1,7 +1,18 @@
+using ClientApp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient("Gateway", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7081");
+    return;
+});
+
+// > Register repositories
+builder.Services.AddSingleton<IReadOnlyRepository<PrecipitationMeasurement>, PrecipitationRepository>();
+// TODO: OTHER REPOSITORIES HERE
 
 var app = builder.Build();
 

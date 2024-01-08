@@ -1,6 +1,31 @@
-﻿@model string
+﻿@using ClientApp.Data;
+@inject IReadOnlyRepository<PrecipitationMeasurement> PrecipitationRepository
 @{
-    string Text = "Precipitation";
+    IEnumerable<PrecipitationMeasurement> Measurements;
+    Measurements = await PrecipitationRepository.GetLatestInEveryLocation();
 }
-
-<h3>@Text! @Model</h3>
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Location</th>
+            <th scope="col">Last Measured</th>
+            <th scope="col">Precipitation (mm)</th>
+            <th scope="col">Coverage (%)</th>
+            <th scope="col">Snowfall</th>
+            <th scope="col">Snow Depth</th>
+        </tr>
+    </thead>
+    <tbody> 
+        @foreach (PrecipitationMeasurement Measurement in Measurements.OrderBy(m => m.Location))
+        {
+            <tr>
+                <td>@Measurement.Location</td>
+                <td>@Measurement.DateTime</td>
+                <td>@Measurement.PrecipitationMm</td>
+                <td>@Measurement.Coverage</td>
+                <td>@Measurement.Snowfall</td>
+                <td>@Measurement.SnowDepth</td>
+            </tr>
+        }
+        </tbody>
+</table>
