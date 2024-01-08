@@ -11,6 +11,7 @@ namespace PrecipitationService.Db
         public float? Coverage { get; set; }
         public float? Snowfall { get; set; }
         public float? SnowDepth { get; set; }
+        public bool SevereRisk { get; set; }
 
         public PrecipitationMeasurementDTO() { }
         public PrecipitationMeasurementDTO(PrecipitationMeasurement m)
@@ -22,6 +23,7 @@ namespace PrecipitationService.Db
             Coverage = m.Coverage;
             Snowfall = m.Snowfall;
             SnowDepth = m.SnowDepth;
+            SevereRisk = m.SevereRisk;
         }
             
         /// <summary>

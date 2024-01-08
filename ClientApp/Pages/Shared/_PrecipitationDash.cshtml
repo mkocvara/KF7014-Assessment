@@ -18,7 +18,7 @@
     <tbody> 
         @foreach (PrecipitationMeasurement Measurement in Measurements.OrderBy(m => m.Location))
         {
-            <tr>
+            <tr class="@(Measurement.SevereRisk ? "text-danger fw-bold" : "")">
                 <td>@Measurement.Location</td>
                 <td>@Measurement.DateTime</td>
                 <td>@Measurement.PrecipitationMm</td>

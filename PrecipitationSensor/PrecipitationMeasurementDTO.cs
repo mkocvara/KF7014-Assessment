@@ -34,7 +34,7 @@ namespace PrecipitationSensors
             // random number generator
             System.Random random = new System.Random();
             float randPrecipitationMm = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 125.0);
-            float randCoverage = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 100.0);
+            float randCoverage = (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) * 100.0);
             float randSnowfall = (random.NextInt64() % 8 == 0) ? (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.0) : 0.0f;
             _testSnowDepth = Math.Max(0, _testSnowDepth + randSnowfall - (float)truncTwo(Math.Min(random.NextDouble(), random.NextDouble()) % 1.7f));
 

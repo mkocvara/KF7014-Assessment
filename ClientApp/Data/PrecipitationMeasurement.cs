@@ -9,7 +9,7 @@
         public float? Coverage { get; set; }
         public float? Snowfall { get; set; }
         public float? SnowDepth { get; set; }
-        public bool? Severe { get; set; }
+        public bool SevereRisk { get; set; }
 
         public PrecipitationMeasurement() { }
 
@@ -22,7 +22,7 @@
             Coverage = coverage;
             Snowfall = snowfall;
             SnowDepth = snowDepth;
-            Severe = severe;
+            SevereRisk = severe;
         }
     }
 }
