@@ -1,4 +1,5 @@
 using ClientApp.Data;
+using EasyNetQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,10 @@ builder.Services.AddHttpClient("Gateway", client =>
 
 // > Register repositories
 builder.Services.AddSingleton<IReadOnlyRepository<PrecipitationMeasurement>, PrecipitationRepository>();
-// TODO: OTHER REPOSITORIES HERE
+// TODO: OTHER REPOSITORIES HERE>
+
+// > Register event bus
+builder.Services.AddSingleton<IBus>(RabbitHutch.CreateBus("host=localhost"));
 
 var app = builder.Build();
 

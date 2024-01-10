@@ -1,3 +1,4 @@
+using EasyNetQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PrecipitationService.Db;
@@ -20,6 +21,9 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 });
+
+// > Register event bus
+builder.Services.AddSingleton<IBus>(RabbitHutch.CreateBus("host=localhost"));
 
 var app = builder.Build();
 

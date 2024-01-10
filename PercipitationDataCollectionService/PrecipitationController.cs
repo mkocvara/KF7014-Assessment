@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using EasyNetQ;
 using PrecipitationService.Db;
 
 namespace PercipitationService
@@ -9,10 +10,12 @@ namespace PercipitationService
     public class PrecipitationController : ControllerBase
     {
         private readonly PrecipitationDb _dbContext;
+        private readonly IBus _eventBus;
 
-        public PrecipitationController(PrecipitationDb dbContext)
+        public PrecipitationController(PrecipitationDb dbContext, IBus eventBus)
         {
             _dbContext = dbContext;
+            _eventBus = eventBus;
         }
 
         /// <summary>
@@ -117,10 +120,21 @@ namespace PercipitationService
             lock (_dbContext.Measurements)
             {
                 _dbContext.Measurements.Add(measurement);
-                _dbContext.SaveChanges();
-                // Console.WriteLine($"POST: Adding new measurement with id {measurement.Id} to the database..."); // for testing            
+                try
+                {
+                    _dbContext.SaveChanges();
+                    // Console.WriteLine($"POST: Adding new measurement with id {measurement.Id} to the database..."); // for testing            
+                }
+                catch
+                {
+                    return Problem("Failed to add measurement to the database.");
+                }
             }
             measurementDto.Id = measurement.Id;
+            
+            // Publish the new measurement's id as a message to the event bus
+            if (measurement.SevereRisk)
+                _eventBus.PubSub.Publish(measurement.Id, "Precipitation");
 
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
         }

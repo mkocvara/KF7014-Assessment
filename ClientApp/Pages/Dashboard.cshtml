@@ -5,13 +5,48 @@
 }
 
 <h1>Dashboard</h1>
+<div class="row">
+    <label class="col-auto m-auto" for="update-interval">Refresh every:</label>
+    <select class="form-select col" asp-for="DefaultUpdateInterval" name="update-interval" id="interval-input" onchange="UpdateInterval()">
+        <option value="1000">1 second</option>
+        <option value="5000">5 seconds</option>
+        <option value="10000">10 seconds</option>
+        <option value="30000">30 seconds</option>
+        <option value="60000">1 minute</option>
+        <option value="300000">5 minutes</option>
+    </select>
+</div>
 <hr />
 
 <h2>Precipitation</h2>
-<partial name="_PrecipitationDash"></partial>
+<div id="precipitation-dashboard">
+    <partial name="_PrecipitationDash" model="0" />
+</div>
 
 <h2>Temperature</h2>
-<p>TBA</p>
+<div id="temperature-dashboard">
+    <p>TBA</p>
+</div>
 
 <h2>Humidity</h2>
-<p>TBA</p>
+<div id="humidity-dashboard">
+    <p>TBA</p>
+</div>
+
+<script type="text/javascript">
+    var intervalTime = @Model.DefaultUpdateInterval;
+    var interval = setInterval(Update, intervalTime);
+    console.log(interval);
+
+    function Update() {
+        $("#precipitation-dashboard").load("/dashboard?handler=PrecipitationDash");
+        //$("#temperature-dashboard").load("/?handler=TemperatureDash");
+        //$("#humidity-dashboard").load("/?handler=HumidityDash");
+    }
+
+    function UpdateInterval() {
+        var newInterval = document.getElementById("interval-input").value;
+        clearInterval(interval);
+        interval = setInterval(Update, newInterval);
+    }
+</script>
