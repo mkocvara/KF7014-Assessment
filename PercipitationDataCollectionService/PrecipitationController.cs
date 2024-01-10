@@ -131,10 +131,17 @@ namespace PercipitationService
                 }
             }
             measurementDto.Id = measurement.Id;
-            
+
             // Publish the new measurement's id as a message to the event bus
-            if (measurement.SevereRisk)
-                _eventBus.PubSub.Publish(measurement.Id, "Precipitation");
+            try 
+            { 
+                if (measurement.SevereRisk)
+                    _eventBus.PubSub.Publish(measurement.Id, "Precipitation");
+            }
+            catch
+            {
+                Console.WriteLine($"Failed to publish message to event bus. Very possibly, RabbitMQ is not running.");
+            }
 
             return CreatedAtAction(nameof(GetMeasurement), new { id = measurementDto.Id }, measurementDto);
         }

@@ -26,9 +26,16 @@ namespace ClientApp.Pages
             }
             _subscriptions.Clear();
 
-            _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("PrecipitationSevereRisk", HandlePrecipSevereRiskMessage, x => x.WithTopic("Precipitation")));
-            //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
-            //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
+            try
+            {
+                _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("PrecipitationSevereRisk", HandlePrecipSevereRiskMessage, x => x.WithTopic("Precipitation")));
+                //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
+                //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Could not subscribe to event bus; it is possible RabbitMQ is not running.");
+            }
         }
 
         public IActionResult OnGet()
