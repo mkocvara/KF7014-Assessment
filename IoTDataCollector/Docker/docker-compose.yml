@@ -1,0 +1,20 @@
+# Script sourced from: https://hub.docker.com/_/mysql
+# Minor adjustments made
+# Use root/example as user/password credentials
+version: '3.1'
+name: 'mysql-assignment'
+
+services:
+  db:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr
+      MYSQL_DATABASE: assignment
+    ports:
+      - 3306:3306

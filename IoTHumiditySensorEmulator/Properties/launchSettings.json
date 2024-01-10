@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "IoTHumiditySensorEmulator": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "TARGET_URL": "https://localhost:7051/api/v1/Humidity"
+      }
+    }
+  }
+}
