@@ -73,7 +73,7 @@
 				"PeriodTimespan": 1,
 				"Limit": 10
 			},
-			"UpstreamPathTemplate": "/Sensor/",
+			"UpstreamPathTemplate": "/Sensor",
 			"UpstreamHttpMethod": [
 				"GET",
 				"POST",
