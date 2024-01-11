@@ -78,7 +78,7 @@ namespace TemperatureAPI.Sensor.Data
         public void updateTimer()
         {
             _timer?.Stop();
-            _timer = new(IntervalInMinutes * 333);
+            _timer = new(IntervalInMinutes * 10);
             _timer.AutoReset = true;
             _timer.Elapsed += OnTimedEvent;
             _timer.Enabled = true;
