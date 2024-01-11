@@ -27,13 +27,9 @@ namespace ClientApp.Pages.Components
             if (response.IsSuccessStatusCode)
             {
                 // Deserialize the response
-                // - The data being pulled is the historical data (unhinged)
-                // I must create another function on the API that only gathers
-                // the latest values for each sensor.
                 // - I must create model classes to recieve both every historical
-                // data point and live temperature data
-                // - add a refresh every 3 min for all the data. See if it is
-                // possible to listen to data updates from the API.
+                // data points and live temperature data
+                // - Create the graph or table? with the data?
 
                 Console.WriteLine(response.Content.ToString());
 

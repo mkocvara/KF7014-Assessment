@@ -34,7 +34,18 @@ namespace TemperatureAPI.Temperature.Filters
 
             // if a wrong API key is supplied
             var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-            var APIKey = configuration.GetValue<string>(SettingName);
+            string APIKey = configuration.GetValue<string>(SettingName);
+
+            if (string.IsNullOrEmpty(APIKey)){
+                if (SettingName == "AdminKey")
+                {
+                    APIKey = "0d9d9e10-5631-4f8c-a793-2bcef08cf2ae";
+                } else if (SettingName == "SensorKey") {
+                    APIKey = "85f82393-59ca-485e-99f3-01d9915bd195";
+                }
+            }
+
+            Console.WriteLine($"{APIKey} - {SubmittedAPIKey}");
 
             if (!SubmittedAPIKey.Equals(APIKey))
             {
