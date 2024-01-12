@@ -132,7 +132,7 @@ namespace PercipitationService
             }
             measurementDto.Id = measurement.Id;
 
-            // Publish the new measurement's id as a message to the event bus
+            // Publish the new measurement's id as a message to the event bus (TODO in other microservices)s
             try 
             { 
                 if (measurement.SevereRisk)
