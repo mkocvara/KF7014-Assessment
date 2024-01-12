@@ -1,19 +1,11 @@
 ﻿namespace ClientApp.Data
 {
-    // TEMP for testing purposes; to be updated with proper members!
     public class TemperatureMeasurement
     {
-        public string? Location { get; set; }
-        public DateTime? DateTime { get; set; }
-        public float? TemperatureC { get; set; }
-        
-        public TemperatureMeasurement() { }
-
-        public TemperatureMeasurement(string location, DateTime dateTime, float tempC)
-        {
-            Location = location;
-            DateTime = dateTime;
-            TemperatureC = tempC;
-        }
+        public int Id { get; set; }
+        public int SensorID { get; set; } = -1;
+        public string SensorDescription { get; set; } = string.Empty;
+        public int Temperature { get; set; } = -1000;
+        public DateTime Date { get; set; } = DateTime.MinValue;
     }
 }

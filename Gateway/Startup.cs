@@ -33,7 +33,6 @@ namespace Gateway
             { 
                 endpoints.MapGet("/", async context => {
                     await context.Response.WriteAsync("Hello World!");
-                    await new HttpClient().GetAsync("https://localhost:7247/Sensor");
                 }); 
             });
         }

@@ -60,6 +60,11 @@ namespace ClientApp.Pages
             return Partial("_AggregateDash");
         }
 
+        public PartialViewResult OnGetTemperatureDash()
+        {
+            return Partial("_TemperatureDash");
+        }
+
         void HandlePrecipSevereRiskMessage(int message)
         {
             SeverePrecipitationAlertId = message;

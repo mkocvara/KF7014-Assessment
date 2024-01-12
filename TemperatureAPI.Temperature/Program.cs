@@ -8,6 +8,7 @@ namespace TemperatureAPI.Temperature
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
+            Console.WriteLine("Starting Temperature Service");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

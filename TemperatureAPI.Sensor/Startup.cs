@@ -17,15 +17,27 @@ namespace TemperatureAPI.Sensor
             services.AddControllers();
             services.AddScoped<ISensorRepository, SensorRepository>();
 
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TemperatureAPI.Sensor", Version = "v1" });
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime hostApplicationLifetime)
         {
+            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            {
+                // Code to run when the application has started
+                Console.WriteLine("Application started!");
+                new HttpClient().GetAsync("https://localhost:7081/Sensor");
+            });
+
+            hostApplicationLifetime.ApplicationStopping.Register(() =>
+            {
+                // Code to run when the application is stopping
+                Console.WriteLine("Application stopping...");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

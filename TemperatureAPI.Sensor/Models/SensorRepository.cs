@@ -12,6 +12,7 @@ namespace TemperatureAPI.Sensor.Models
         public SensorRepository()
         {
             init();
+            Console.WriteLine($"Initialized Sensor Repository");
         }
 
         public void init()

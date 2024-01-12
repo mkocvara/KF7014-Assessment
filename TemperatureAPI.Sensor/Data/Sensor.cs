@@ -62,7 +62,7 @@ namespace TemperatureAPI.Sensor.Data
                 JsonSerializer.Serialize(temperatureObject),
                 Encoding.UTF8, "application/json");
 
-            String url = "https://localhost:7247/Temperature";
+            String url = "https://localhost:7081/Temperature";
             HttpResponseMessage response = await _client.PostAsync(url, content);
         }
 
@@ -78,7 +78,7 @@ namespace TemperatureAPI.Sensor.Data
         public void updateTimer()
         {
             _timer?.Stop();
-            _timer = new(IntervalInMinutes * 333);
+            _timer = new(IntervalInMinutes * 60 * 1000);
             _timer.AutoReset = true;
             _timer.Elapsed += OnTimedEvent;
             _timer.Enabled = true;

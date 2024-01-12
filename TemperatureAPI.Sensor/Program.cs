@@ -7,8 +7,8 @@ namespace TemperatureAPI.Sensor
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Starting Sensor Service");
             CreateHostBuilder(args).Build().Run();
-            // new HttpClient().GetAsync("https://localhost:7247/");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

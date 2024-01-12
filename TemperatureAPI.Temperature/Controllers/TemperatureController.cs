@@ -21,9 +21,15 @@ namespace TemperatureAPI.Temperature.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TemperatureModel>>> GetAllTemperatureEntries()
+        public async Task<ActionResult<List<TemperatureModel>>> GetLatestTemperatureEntries()
         {
-            return await _temperatureRepository.GetAllTemperatureEntries();
+            return await _temperatureRepository.GetLatestTemperatureEntries();
+        }
+
+        [HttpGet("History")]
+        public async Task<ActionResult<List<TemperatureModel>>> GetHistoricalTemperatureEntries()
+        {
+            return await _temperatureRepository.GetHistoricalTemperatureEntries();
         }
 
         [HttpGet("{id}")]

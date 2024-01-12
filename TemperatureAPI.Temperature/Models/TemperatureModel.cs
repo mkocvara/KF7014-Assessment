@@ -4,7 +4,8 @@
     {
         public int Id { get; set; }
         public int Temperature { get; set; }
-        public string Sensor { get; set; }
-        public String Date { get; set; }
+        public int SensorID { get; set; }
+        public string SensorDescription { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
     }
 }

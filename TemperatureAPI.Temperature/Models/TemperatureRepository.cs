@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TemperatureAPI.Temperature.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Globalization;
 
 namespace TemperatureAPI.Temperature.Models
 {
@@ -15,15 +16,46 @@ namespace TemperatureAPI.Temperature.Models
         {
             _context = context;
         }
-        public async Task<List<TemperatureModel>> GetAllTemperatureEntries() =>
-            await _context.Entries.Select(
-                entry => new TemperatureModel()
+        public async Task<List<TemperatureModel>> GetHistoricalTemperatureEntries()
+        {
+            var entries = await _context.Entries.ToListAsync();
+
+            var historicalEntries = entries
+                .Select(entry => new TemperatureModel
                 {
                     Id = entry.Id,
                     Temperature = entry.Temperature,
-                    Date = entry.Date,
-                    Sensor = entry.SensorDescription
-                }).ToListAsync();
+                    Date = DateTime.ParseExact(entry.Date, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
+                    SensorID = entry.SensorId,
+                    SensorDescription = entry.SensorDescription
+                })
+                .ToList();
+
+            return historicalEntries;
+        }
+
+        public async Task<List<TemperatureModel>> GetLatestTemperatureEntries()
+        {
+            var entries = await _context.Entries
+                .GroupBy(entry => entry.SensorId)
+                .Select(group => group
+                    .OrderByDescending(entry => entry.Date)
+                    .FirstOrDefault())
+                .ToListAsync();
+
+            var latestEntries = entries.Select(entry => new TemperatureModel
+            {
+                Id = entry.Id,
+                Temperature = entry.Temperature,
+                Date = DateTime.ParseExact(entry.Date, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
+                SensorID = entry.SensorId,
+                SensorDescription = entry.SensorDescription
+            }).ToList();
+
+            return latestEntries;
+        }
+
+
 
         public async Task<TemperatureModel?> GetTemperatureEntry(int id)
         {
@@ -37,8 +69,11 @@ namespace TemperatureAPI.Temperature.Models
             {
                 Id = entry.Id,
                 Temperature = entry.Temperature,
-                Date = entry.Date,
-                Sensor = entry.SensorDescription
+                Date = DateTime.TryParseExact(entry.Date, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
+                        ? parsedDate
+                        : DateTime.MinValue,
+                SensorID = entry.SensorId,
+                SensorDescription = entry.SensorDescription
             };
         }
 
