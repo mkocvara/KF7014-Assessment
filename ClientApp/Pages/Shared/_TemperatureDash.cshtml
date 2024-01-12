@@ -1,14 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using ClientApp.Data;
+@inject IHttpClientFactory HttpClientFactory;
 @{
+    HttpClient _httpClient = HttpClientFactory.CreateClient("Gateway");
+
+    // Make an HTTP request to the API endpoint
+    List<TemperatureMeasurement> latestTemperatures = await _httpClient.GetFromJsonAsync<List<TemperatureMeasurement>>("/Temperature") ?? new List<TemperatureMeasurement>();
 }
 
-@using ClientApp.Models;
-@model List<TemperatureViewModel>
 
 <h3>Latest Temperatures</h3>
-<table>
+<table class="table table-striped table-sm">
     <thead>
         <tr>
             <th>Sensor ID</th>
@@ -18,7 +19,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var temperature in Model)
+        @foreach (var temperature in latestTemperatures)
         {
             <tr>
                 <td>@temperature.SensorID</td>

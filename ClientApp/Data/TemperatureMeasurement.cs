@@ -1,6 +1,6 @@
-﻿namespace ClientApp.Models
+﻿namespace ClientApp.Data
 {
-    public class TemperatureViewModel
+    public class TemperatureMeasurement
     {
         public int Id { get; set; }
         public int SensorID { get; set; } = -1;
