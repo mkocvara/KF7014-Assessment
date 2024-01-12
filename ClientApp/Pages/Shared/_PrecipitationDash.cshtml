@@ -1,7 +1,6 @@
 ﻿@using ClientApp.Data;
-@using EasyNetQ;
+@using ClientApp.Data.Repositories;
 @inject IReadOnlyRepository<PrecipitationMeasurement> PrecipitationRepository
-@inject IBus EventBus
 @model int // id of newest measurement with severe risk (0 if none)
 @{
     IEnumerable<PrecipitationMeasurement> Measurements;
@@ -36,15 +35,15 @@
             </tr>
         </thead>
         <tbody> 
-            @foreach (PrecipitationMeasurement Measurement in Measurements.OrderBy(m => m.Location))
+            @foreach (PrecipitationMeasurement measurement in Measurements.OrderBy(m => m.Location))
             {
-                <tr class="@(Measurement.SevereRisk ? "text-danger fw-bold" : "")">
-                    <td>@Measurement.Location</td>
-                    <td>@Measurement.DateTime</td>
-                    <td>@Measurement.PrecipitationMm</td>
-                    <td>@Measurement.Coverage</td>
-                    <td>@Measurement.Snowfall</td>
-                    <td>@Measurement.SnowDepth</td>
+                <tr class="@(measurement.SevereRisk ? "text-danger fw-bold" : "")">
+                    <td>@measurement.Location</td>
+                    <td>@measurement.DateTime</td>
+                    <td>@measurement.PrecipitationMm</td>
+                    <td>@measurement.Coverage</td>
+                    <td>@measurement.Snowfall</td>
+                    <td>@measurement.SnowDepth</td>
                 </tr>
             }
             </tbody>

@@ -1,6 +1,4 @@
-﻿using static System.Net.WebRequestMethods;
-
-namespace ClientApp.Data
+﻿namespace ClientApp.Data.Repositories
 {
     public class PrecipitationRepository : IReadOnlyRepository<PrecipitationMeasurement>
     {
@@ -18,7 +16,7 @@ namespace ClientApp.Data
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
                 List<PrecipitationMeasurement>? measurements = await http.GetFromJsonAsync<List<PrecipitationMeasurement>>("/Precipitation");
-            
+
                 if (measurements == null)
                     return new List<PrecipitationMeasurement>();
                 else
@@ -65,23 +63,16 @@ namespace ClientApp.Data
             }
         }
 
-        public async Task<PrecipitationMeasurement?> GetLatest()
+        public async Task<PrecipitationMeasurement?> GetLatestInLocation(string location)
         {
             try
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                List<PrecipitationMeasurement>? measurements = await http.GetFromJsonAsync<List<PrecipitationMeasurement>>($"/Precipitation");
+                List<PrecipitationMeasurement>? measurements = await http.GetFromJsonAsync<List<PrecipitationMeasurement>>($"/Precipitation/location/{location}");
                 if (measurements == null)
                     return null;
 
-                int latestIndex = 0;
-                for(int i = 1; i < measurements.Count; i++)
-                {
-                    if (measurements[i].DateTime > measurements[latestIndex].DateTime)
-                        latestIndex = i;
-                }
-
-                return measurements[latestIndex];
+                return measurements.MaxBy(m => m.DateTime);
             }
             catch (Exception e)
             {
@@ -104,7 +95,7 @@ namespace ClientApp.Data
                 var mByLocation = measurements.GroupBy(m => m.Location);
 
                 int latestIndex;
-                foreach(var m in mByLocation)
+                foreach (var m in mByLocation)
                 {
                     latestIndex = 0;
                     for (int i = 1; i < m.Count(); i++)
