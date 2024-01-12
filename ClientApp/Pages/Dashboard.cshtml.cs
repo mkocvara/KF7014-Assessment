@@ -50,9 +50,14 @@ namespace ClientApp.Pages
 
         // Gets the partial view for Precipitation Dashboard
         public PartialViewResult OnGetPrecipitationDash()
+        {            
+            return Partial("_PrecipitationDash", SeverePrecipitationAlertId);
+        }
+
+        // Gets the partial view for Aggregate Dashboard
+        public PartialViewResult OnGetAggregateDash()
         {
-            PartialViewResult partial = Partial("_PrecipitationDash", SeverePrecipitationAlertId);
-            return partial;
+            return Partial("_AggregateDash");
         }
 
         void HandlePrecipSevereRiskMessage(int message)
