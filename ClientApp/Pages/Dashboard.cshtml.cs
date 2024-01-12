@@ -32,7 +32,7 @@ namespace ClientApp.Pages
                 //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
                 //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
             }
-            catch (Exception e)
+            catch
             {
                 Console.WriteLine($"Could not subscribe to event bus; it is possible RabbitMQ is not running.");
             }

@@ -1,0 +1,54 @@
+﻿@using ClientApp.Data;
+@using ClientApp.Data.Repositories;
+@inject IReadOnlyRepository<WeatherMeasurement> AggregateRepository
+@{
+    IEnumerable<WeatherMeasurement> Measurements;
+    Measurements = await AggregateRepository.GetLatestInEveryLocation();
+}
+
+@if (Measurements.Any())
+{
+    <p>Latest measurements from all locations. If multiple measurements have been taken in the same location in one day, only the latest from that day are used.</p>
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Location</th>
+                <th scope="col">Date</th>
+
+                <th scope="col">Precipitation (mm)</th>
+                <th scope="col">Coverage (%)</th>
+                <th scope="col">Snowfall</th>
+                <th scope="col">Snow Depth</th>
+
+                <th scope="col">Temperature (&degC)</th>
+
+                <th scope="col">Humidity (uhh??)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (WeatherMeasurement measurement in Measurements.OrderBy(m => m.Location))
+            {
+                <tr class="">
+                    <td>@measurement.Location</td>
+                    <td>@(measurement.DateTime.HasValue ? measurement.DateTime.Value.ToShortDateString() : "")</td>
+
+                    @{string riskClass = measurement.PrecipitationSevereRisk ? "\"text-danger fw-bold\"" : "";}
+                    <td class=@riskClass>@measurement.PrecipitationMm</td>
+                    <td class=@riskClass>@measurement.Coverage</td>
+                    <td class=@riskClass>@measurement.Snowfall</td>
+                    <td class=@riskClass>@measurement.SnowDepth</td>
+
+                    @{/*riskClass = measurement.PrecipitationSevereRisk ? "\"text-danger fw-bold\"" : "";*/}
+                    <td @* class=@riskClass *@>@measurement.TemperatureC</td>
+
+                    @{/*riskClass = measurement.PrecipitationSevereRisk ? "\"text-danger fw-bold\"" : "";*/}
+                    <td @* class=@riskClass *@>@measurement.Humidity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><i>No measurements found.</i></p>
+}

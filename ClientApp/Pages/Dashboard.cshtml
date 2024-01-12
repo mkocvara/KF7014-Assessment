@@ -33,15 +33,20 @@
     <p>TBA</p>
 </div>
 
+<h2>Aggregated</h2>
+<div id="aggregate-dashboard">
+    <partial name="_AggregateDash" />
+</div>
+
 <script type="text/javascript">
     var intervalTime = @Model.DefaultUpdateInterval;
     var interval = setInterval(Update, intervalTime);
-    console.log(interval);
 
     function Update() {
         $("#precipitation-dashboard").load("/dashboard?handler=PrecipitationDash");
         //$("#temperature-dashboard").load("/?handler=TemperatureDash");
         //$("#humidity-dashboard").load("/?handler=HumidityDash");
+        //$("#aggregate-dashboard").load("/?handler=AggregateDash");
     }
 
     function UpdateInterval() {
