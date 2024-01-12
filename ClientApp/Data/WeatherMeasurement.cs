@@ -49,7 +49,7 @@
             SnowDepth = precip.SnowDepth;
             PrecipitationSevereRisk = precip.SevereRisk;
 
-            TemperatureC = temp.TemperatureC;
+            TemperatureC = temp.Temperature;
 
             Humidity = humidity.Humidity;
         }
@@ -92,7 +92,7 @@
             if (!CheckLocationAndDate(temp.Location, temp.DateTime))
                 return this;
 
-            TemperatureC = temp.TemperatureC;
+            TemperatureC = temp.Temperature;
 
             return this;
         }
