@@ -26,7 +26,8 @@ namespace TemperatureAPI.Temperature.Models
                     Id = entry.Id,
                     Temperature = entry.Temperature,
                     Date = DateTime.ParseExact(entry.Date, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
-                    Sensor = entry.SensorDescription
+                    SensorID = entry.SensorId,
+                    SensorDescription = entry.SensorDescription
                 })
                 .ToList();
 
@@ -47,7 +48,8 @@ namespace TemperatureAPI.Temperature.Models
                 Id = entry.Id,
                 Temperature = entry.Temperature,
                 Date = DateTime.ParseExact(entry.Date, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
-                Sensor = entry.SensorDescription
+                SensorID = entry.SensorId,
+                SensorDescription = entry.SensorDescription
             }).ToList();
 
             return latestEntries;
@@ -70,7 +72,8 @@ namespace TemperatureAPI.Temperature.Models
                 Date = DateTime.TryParseExact(entry.Date, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate)
                         ? parsedDate
                         : DateTime.MinValue,
-                Sensor = entry.SensorDescription
+                SensorID = entry.SensorId,
+                SensorDescription = entry.SensorDescription
             };
         }
 

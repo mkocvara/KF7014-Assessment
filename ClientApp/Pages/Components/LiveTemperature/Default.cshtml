@@ -4,4 +4,28 @@
 @{
 }
 
-<h3>This is my Live Temperature content!</h3>
+@using ClientApp.Models;
+@model List<TemperatureViewModel>
+
+<h3>Latest Temperatures</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Sensor ID</th>
+            <th>Sensor Description</th>
+            <th>Latest Temperature</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var temperature in Model)
+        {
+            <tr>
+                <td>@temperature.SensorID</td>
+                <td>@temperature.SensorDescription</td>
+                <td>@temperature.Temperature</td>
+                <td>@temperature.Date</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClientApp.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ClientApp.Pages.Components
 {
@@ -31,10 +33,10 @@ namespace ClientApp.Pages.Components
                 // data points and live temperature data
                 // - Create the graph or table? with the data?
 
-                Console.WriteLine(response.Content.ToString());
+                string data = response.Content.ReadAsStringAsync().Result;
+                List<TemperatureViewModel> latestTemperatures = JsonConvert.DeserializeObject<List<TemperatureViewModel>>(data) ?? new List<TemperatureViewModel>();
 
-                
-                return View();
+                return View(latestTemperatures);
             }
 
             // Handle the case where the API request is not successful
