@@ -1,0 +1,32 @@
+﻿@using ClientApp.Data;
+@inject IHttpClientFactory HttpClientFactory;
+@{
+    HttpClient _httpClient = HttpClientFactory.CreateClient("Gateway");
+
+    // Make an HTTP request to the API endpoint
+    List<TemperatureMeasurement> latestTemperatures = await _httpClient.GetFromJsonAsync<List<TemperatureMeasurement>>("/Temperature") ?? new List<TemperatureMeasurement>();
+}
+
+
+<h3>History</h3>
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Sensor ID</th>
+            <th>Sensor Description</th>
+            <th>Latest Temperature</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var temperature in latestTemperatures)
+        {
+            <tr>
+                <td>@temperature.SensorID</td>
+                <td>@temperature.Location</td>
+                <td>@temperature.Temperature</td>
+                <td>@temperature.DateTime</td>
+            </tr>
+        }
+    </tbody>
+</table>

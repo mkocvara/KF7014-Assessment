@@ -38,6 +38,11 @@
     <partial name="_AggregateDash" />
 </div>
 
+<h2>History</h2>
+<div id="history-dashboard">
+    <partial name="_HistoryDash" />
+</div>
+
 <script type="text/javascript">
     var intervalTime = @Model.DefaultUpdateInterval;
     var interval = setInterval(Update, intervalTime);
@@ -47,6 +52,7 @@
         $("#temperature-dashboard").load("/dashboard?handler=TemperatureDash");
         //$("#humidity-dashboard").load("/?handler=HumidityDash");
         $("#aggregate-dashboard").load("/?handler=AggregateDash");
+        $("#history-dashboard").load("/?handler=HistoryDash");
     }
 
     function UpdateInterval() {
