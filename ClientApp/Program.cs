@@ -14,6 +14,7 @@ builder.Services.AddHttpClient("Gateway", client =>
 
 // > Register repositories
 builder.Services.AddSingleton<IReadOnlyRepository<PrecipitationMeasurement>, PrecipitationRepository>();
+builder.Services.AddSingleton<IReadOnlyRepository<TemperatureMeasurement>, TemperatureRepository>();
 // TODO: OTHER REPOSITORIES HERE
 builder.Services.AddSingleton<IReadOnlyRepository<WeatherMeasurement>, AggregateRepository>();
 
