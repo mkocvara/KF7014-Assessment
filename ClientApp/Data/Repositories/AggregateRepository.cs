@@ -6,28 +6,28 @@ namespace ClientApp.Data.Repositories
 {
     public class AggregateRepository : IReadOnlyRepository<WeatherMeasurement>
     {
+        private readonly IReadOnlyRepository<PrecipitationMeasurement> _precipitationRepository;
+        private readonly IReadOnlyRepository<TemperatureMeasurement> _temperatureRepository;
+        //private readonly IReadOnlyRepository<TemperatureMeasurement> _humidityRepository;
 
-        private readonly IHttpClientFactory _httpClientFactory;
-
-        public AggregateRepository(IHttpClientFactory HttpClientFactory)
+        public AggregateRepository(IReadOnlyRepository<PrecipitationMeasurement> precipitationRepository,
+                                   IReadOnlyRepository<TemperatureMeasurement> temperatureRepository/*,
+                                   IReadOnlyRepository<HumidityMeasurement> humidityRepository*/)
         {
-            _httpClientFactory = HttpClientFactory;
+            _precipitationRepository = precipitationRepository;
+            _temperatureRepository = temperatureRepository;
+            //_humidityRepository = humidityRepository;
         }
 
         public async Task<IEnumerable<WeatherMeasurement>> GetAll()
         {
             try
             {
-                HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                List<PrecipitationMeasurement>? precipMeasurements = await http.GetFromJsonAsync<List<PrecipitationMeasurement>>("/Precipitation");
-                // TODO: Get other measurements from other services
-                List<TemperatureMeasurement>? tempMeasurements = new();
-                List<HumidityMeasurement>? humidityMeasurements = new();
-
-                // avoid null references
-                precipMeasurements ??= new List<PrecipitationMeasurement>();
-                tempMeasurements ??= new List<TemperatureMeasurement>();
-                humidityMeasurements ??= new List<HumidityMeasurement>();
+                List<PrecipitationMeasurement> precipMeasurements = (await _precipitationRepository.GetAll()).ToList();
+                List<TemperatureMeasurement> tempMeasurements = (await _temperatureRepository.GetAll()).ToList();
+                // TODO: Get other measurements from humidity service
+                //List<HumidityMeasurement> humidityMeasurements = (await _humidityRepository.GetAll()).ToList();
+                List<HumidityMeasurement> humidityMeasurements = new();
 
                 // DEBUG TEMP
                 tempMeasurements.Add(new TemperatureMeasurement("Newcastle upon Tyne", DateTime.Today - TimeSpan.FromDays(1), 10));
@@ -44,7 +44,6 @@ namespace ClientApp.Data.Repositories
                 IEnumerable<HumidityMeasurement> hmHasDateAndLoc = humidityMeasurements.Where(hm => hm.DateTime.HasValue && hm.Location is not null);
 
 #pragma warning disable CS8629 // DateTime cannot be null here.
-
                 // where measurements share the same location and date, keep only the most recent
                 IEnumerable<IGrouping<string?, PrecipitationMeasurement>> pmByLocation = pmHasDateAndLoc.GroupBy(pm => pm.Location);
                 List<PrecipitationMeasurement> precipMeasurementsFiltered = new();
@@ -113,16 +112,10 @@ namespace ClientApp.Data.Repositories
         {
             try
             {
-                HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                List<PrecipitationMeasurement>? precipMeasurements = await http.GetFromJsonAsync<List<PrecipitationMeasurement>>($"/Precipitation/location/{location}");
+                List<PrecipitationMeasurement> precipMeasurements = (await _precipitationRepository.GetAllByLocation(location)).ToList();
+                List<TemperatureMeasurement> tempMeasurements = (await _temperatureRepository.GetAllByLocation(location)).ToList();
                 // TODO: Get other measurements from other services
-                List<TemperatureMeasurement>? tempMeasurements = new();
-                List<HumidityMeasurement>? humidityMeasurements = new();
-
-                // avoid null references
-                precipMeasurements ??= new List<PrecipitationMeasurement>();
-                tempMeasurements ??= new List<TemperatureMeasurement>();
-                humidityMeasurements ??= new List<HumidityMeasurement>();
+                List<HumidityMeasurement> humidityMeasurements = new();
 
                 // ignore measurements without a date, as they cannot be aggregated
                 IEnumerable<PrecipitationMeasurement> pmHasDate = precipMeasurements.Where(pm => pm.DateTime.HasValue);
@@ -184,42 +177,26 @@ namespace ClientApp.Data.Repositories
         {
             try
             {
-                HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                
-                List<PrecipitationMeasurement>? precipMeasurements = await http.GetFromJsonAsync<List<PrecipitationMeasurement>>($"/Precipitation/location/{location}");
+                PrecipitationMeasurement precipMeasurement = await _precipitationRepository.GetLatestInLocation(location) ?? new();
+                TemperatureMeasurement tempMeasurement = await _temperatureRepository.GetLatestInLocation(location) ?? new();
                 // TODO: Get other measurements from other services
-                List<TemperatureMeasurement>? tempMeasurements = new();
-                List<HumidityMeasurement>? humidityMeasurements = new();
+                HumidityMeasurement humidityMeasurement = new();
 
-                // avoid null references
-                precipMeasurements ??= new List<PrecipitationMeasurement>();
-                tempMeasurements ??= new List<TemperatureMeasurement>();
-                humidityMeasurements ??= new List<HumidityMeasurement>();
-
-                // ignore measurements without a date, as they cannot be aggregated
-                IEnumerable<PrecipitationMeasurement> pmHasDate = precipMeasurements.Where(pm => pm.DateTime.HasValue);
-                IEnumerable<TemperatureMeasurement> tmHasDate = tempMeasurements.Where(tm => tm.DateTime.HasValue);
-                IEnumerable<HumidityMeasurement> hmHasDate = humidityMeasurements.Where(hm => hm.DateTime.HasValue);
-
-                PrecipitationMeasurement? pmLatest = pmHasDate.MaxBy(pm => pm.DateTime);
-                TemperatureMeasurement? tmLatest = tmHasDate.MaxBy(tm => tm.DateTime);
-                HumidityMeasurement? hmLatest = hmHasDate.MaxBy(hm => hm.DateTime);
-
-                if (pmLatest == null || tmLatest == null || hmLatest == null)
-                    throw new Exception($"Error: failed to find one or more latest measurements in location \"{location}\"");
-
-#pragma warning disable CS8629 // DateTime cannot be null here.
-                // Find latest date of measurement
-                DateTime latestDate = new List<DateTime> { pmLatest.DateTime.Value.Date, tmLatest.DateTime.Value.Date, hmLatest.DateTime.Value.Date }.Max();
-#pragma warning restore CS8629
+                DateTime? latestDate = null;
+                if (precipMeasurement.DateTime.HasValue)
+                    latestDate = precipMeasurement.DateTime.Value.Date;
+                if (tempMeasurement.DateTime.HasValue)
+                    latestDate = latestDate.HasValue ? new List<DateTime> { latestDate.Value.Date, tempMeasurement.DateTime.Value.Date }.Max() : tempMeasurement.DateTime.Value.Date;
+                if (humidityMeasurement.DateTime.HasValue)
+                    latestDate = latestDate.HasValue ? new List<DateTime> { latestDate.Value.Date, humidityMeasurement.DateTime.Value.Date }.Max() : humidityMeasurement.DateTime.Value.Date;
 
                 WeatherMeasurement wm = new();
-                if (pmLatest.DateTime.Value.Date == latestDate)
-                    wm.GetDataFromPrecipitationMeasurement(pmLatest);
-                if (tmLatest.DateTime.Value.Date == latestDate)
-                    wm.GetDataFromTemperatureMeasurement(tmLatest);
-                if (hmLatest.DateTime.Value.Date == latestDate)
-                    wm.GetDataFromHumidityMeasurement(hmLatest);
+                if (precipMeasurement.DateTime.HasValue && precipMeasurement.DateTime.Value.Date == latestDate)
+                    wm.GetDataFromPrecipitationMeasurement(precipMeasurement);
+                if (tempMeasurement.DateTime.HasValue && tempMeasurement.DateTime.Value.Date == latestDate)
+                    wm.GetDataFromTemperatureMeasurement(tempMeasurement);
+                if (humidityMeasurement.DateTime.HasValue && humidityMeasurement.DateTime.Value.Date == latestDate)
+                    wm.GetDataFromHumidityMeasurement(humidityMeasurement);
 
                 return wm;
             }
