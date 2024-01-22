@@ -50,9 +50,9 @@
     function Update() {
         $("#precipitation-dashboard").load("/dashboard?handler=PrecipitationDash");
         $("#temperature-dashboard").load("/dashboard?handler=TemperatureDash");
-        //$("#humidity-dashboard").load("/?handler=HumidityDash");
-        $("#aggregate-dashboard").load("/?handler=AggregateDash");
-        $("#history-dashboard").load("/?handler=HistoryDash");
+        //$("#humidity-dashboard").load("/dashboard?handler=HumidityDash");
+        $("#aggregate-dashboard").load("/dashboard?handler=AggregateDash");
+        //$("#history-dashboard").load("/dashboard?handler=HistoryDash");
     }
 
     function UpdateInterval() {
