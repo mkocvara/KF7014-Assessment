@@ -1,0 +1,45 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MONGODB_URI": "mongodb://root:jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr@localhost:27017/"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5251"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MYSQL_URI": "server=localhost;database=assignment;user=admin;password=jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr",
+        "HUMIDITY_MIN": "30",
+        "HUMIDITY_MAX": "90"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7051;http://localhost:5251"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:13442",
+      "sslPort": 44381
+    }
+  }
+}
