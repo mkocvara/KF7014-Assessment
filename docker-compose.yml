@@ -111,8 +111,8 @@ services:
       context: .
       dockerfile: Gateway/Dockerfile
     ports:
-      - 80:80
-      - 443:443
+      - 8080:80
+      - 8443:443
     networks:
       - external
       - humidity-microservice
@@ -124,6 +124,11 @@ services:
     build:
       context: .
       dockerfile: ClientApp/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - external
 
 networks:
   humidity-microservice:

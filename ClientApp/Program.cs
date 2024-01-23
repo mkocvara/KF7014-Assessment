@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient("Gateway", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7081");
+    // client.BaseAddress = new Uri("https://localhost:7081");
+    client.BaseAddress = new Uri("http://gateway");
     return;
 });
 

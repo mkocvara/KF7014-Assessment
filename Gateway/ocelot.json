@@ -226,6 +226,6 @@
 		}
 	],
 	"GlobalConfiguration": {
-		"BaseUrl": "http://localhost:7081"
+		"BaseUrl": "http://localhost:80"
 	}
 }
