@@ -9,11 +9,12 @@ Thread.Sleep(sleeptime);
 int sensorCount = 30;
 
 
-for(int i = 0; i<=sensorCount; i++)
+for(int i = 1; i<=sensorCount; i++)
 {
     new Sensor(i).SendRequests();
     Thread.Sleep(1000);
 }
 
 Console.WriteLine("Running all threads. Press any key to exit...");
-Console.ReadKey();
+
+await new Sensor(sensorCount).SendRequests();

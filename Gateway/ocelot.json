@@ -6,52 +6,60 @@
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
-					"Port": 7212
+					"Host": "precipitation-api",
+					"Port": 443
 				}
 			],
 
 			"UpstreamPathTemplate": "/Precipitation",
-			"UpstreamHttpMethod": [ "GET", "POST" ]
+			"UpstreamHttpMethod": [ "GET", "POST" ],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"DownstreamPathTemplate": "/api/Precipitation/{id}",
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
-					"Port": 7212
+					"Host": "precipitation-api",
+					"Port": 443
 				}
 			],
 
 			"UpstreamPathTemplate": "/Precipitation/{id}",
-			"UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+			"UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"DownstreamPathTemplate": "/api/Precipitation/location/{location}",
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
-					"Port": 7212
+					"Host": "precipitation-api",
+					"Port": 443
 				}
 			],
 
 			"UpstreamPathTemplate": "/Precipitation/location/{location}",
-			"UpstreamHttpMethod": [ "GET" ]
+			"UpstreamHttpMethod": [ "GET" ],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"DownstreamPathTemplate": "/api/Precipitation/severe",
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
-					"Port": 7212
+					"Host": "precipitation-api",
+					"Port": 443
 				}
 			],
 
 			"UpstreamPathTemplate": "/Precipitation/severe",
-			"UpstreamHttpMethod": [ "GET" ]
+			"UpstreamHttpMethod": [ "GET" ],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		// Temperature API
 		// Sensor
@@ -60,7 +68,7 @@
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
+					"Host": "temperature-sensor",
 					"Port": 7158
 				}
 			],
@@ -79,14 +87,16 @@
 				"POST",
 				"PUT",
 				"DELETE"
-			]
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"DownstreamPathTemplate": "/api/Sensor/{everything}",
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
+					"Host": "temperature-sensor",
 					"Port": 7158
 				}
 			],
@@ -105,7 +115,9 @@
 				"POST",
 				"PUT",
 				"DELETE"
-			]
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		// Temperature
 		{
@@ -113,8 +125,8 @@
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
-					"Port": 7256
+					"Host": "temperature-api",
+					"Port": 443
 				}
 			],
 			"RateLimitOptions": {
@@ -132,15 +144,17 @@
 				"POST",
 				"PUT",
 				"DELETE"
-			]
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		},
 		{
 			"DownstreamPathTemplate": "/api/Temperature/{everything}",
 			"DownstreamScheme": "https",
 			"DownstreamHostAndPorts": [
 				{
-					"Host": "localhost",
-					"Port": 7256
+					"Host": "temperature-api",
+					"Port": 443
 				}
 			],
 			"RateLimitOptions": {
@@ -158,10 +172,60 @@
 				"POST",
 				"PUT",
 				"DELETE"
-			]
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
+		},
+		// Humidity
+		{
+			"DownstreamPathTemplate": "/api/v1/Humidity",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "humidity-api",
+					"Port": 443
+				}
+			],
+			"RateLimitOptions": {
+				"EnableRateLimiting": true,
+				"Period": "1s",
+				"PeriodTimespan": 1,
+				"Limit": 10
+			},
+			"UpstreamPathTemplate": "/Humidity",
+			"UpstreamHttpMethod": [
+				"GET",
+				"POST",
+				"PUT"
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
+		},
+		{
+			"DownstreamPathTemplate": "/api/v1/Humidity/{id}",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "humidity-api",
+					"Port": 443
+				}
+			],
+			"RateLimitOptions": {
+				"EnableRateLimiting": true,
+				"Period": "1s",
+				"PeriodTimespan": 1,
+				"Limit": 10
+			},
+			"UpstreamPathTemplate": "/Humidity/{id}",
+			"UpstreamHttpMethod": [
+				"GET",
+				"DELETE"
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		}
 	],
 	"GlobalConfiguration": {
-		"BaseUrl": "http://localhost:7081"
+		"BaseUrl": "http://localhost:80"
 	}
 }
