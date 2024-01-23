@@ -10,7 +10,9 @@
         "precipitationservice": "StartDebugging",
         "temperatureapi.sensor": "StartDebugging",
         "temperatureapi.temperature": "StartDebugging",
-        "iothumiditysensoremulator": "StartDebugging"
+        "iothumiditysensoremulator": "StartDebugging",
+        "gateway": "StartDebugging",
+        "clientapp": "StartDebugging"
       }
     }
   }

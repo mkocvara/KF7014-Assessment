@@ -56,14 +56,14 @@ services:
       dockerfile: iothumiditysensoremulator/Dockerfile
     restart: on-failure
     environment:
-      TARGET_URL: http://humidity-api/api/v1/Humidity
+      TARGET_URL: https://humidity-api/api/v1/Humidity
     #depends_on:
     #  humidity-api:
     #    condition: service_healthy
     #links: 
     #  - humidity-api
     networks:
-      - humidity-microservice
+      - external
     
   precipitation-api:
     image: ${DOCKER_REGISTRY-}precipitationservice
@@ -83,7 +83,7 @@ services:
       context: .
       dockerfile: PrecipitationSensor/Dockerfile
     networks:
-      - precipitation-microservice
+      - external
 
   temperature-api:
     image: ${DOCKER_REGISTRY-}temperatureapitemperature
@@ -103,13 +103,33 @@ services:
       context: .
       dockerfile: TemperatureAPI.Sensor/Dockerfile
     networks:
+      - external
+
+  gateway:
+    image: ${DOCKER_REGISTRY-}gateway
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - humidity-microservice
+      - precipitation-microservice
       - temperature-microservice
 
+  clientapp:
+    image: ${DOCKER_REGISTRY-}clientapp
+    build:
+      context: .
+      dockerfile: ClientApp/Dockerfile
 
 networks:
   humidity-microservice:
   precipitation-microservice:
   temperature-microservice:
+  external:
+
+
 
 
 
