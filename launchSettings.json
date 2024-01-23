@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "humidity-api": "StartDebugging",
+        "humidity-sensor": "StartDebugging",
+        "precipitationsensors": "StartDebugging",
+        "precipitationservice": "StartDebugging",
+        "temperatureapi.sensor": "StartDebugging",
+        "temperatureapi.temperature": "StartDebugging",
+        "iothumiditysensoremulator": "StartDebugging"
+      }
+    }
+  }
+}

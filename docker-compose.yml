@@ -1,0 +1,117 @@
+version: '3.4'
+
+services:
+  humidity-api:
+    image: ${DOCKER_REGISTRY-}iothumiditydatacollector
+    build:
+      context: .
+      dockerfile: IoTDataCollector/Dockerfile
+    environment:
+      HUMIDITY_MIN: 30
+      HUMIDITY_MAX: 90
+      MYSQL_URI: server=humidity-db;database=assignment;user=admin;password=jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr
+    restart: on-failure
+    ports: 
+      - 1080:80
+      - 10443:443
+    #healthcheck:
+    #  test: curl -f https://localhost/api/v1/Humidity
+    # start_period: 3s
+    #  interval: 3s
+    #  timeout: 3s
+    depends_on:
+      humidity-db:
+        condition: service_healthy
+    links: 
+      - humidity-db
+    networks:
+      - humidity-microservice
+
+  humidity-db:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr
+      MYSQL_DATABASE: assignment
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 100
+    networks:
+      - humidity-microservice
+
+  humidity-sensor:
+    image: ${DOCKER_REGISTRY-}iothumiditysensoremulator
+    build:
+      context: .
+      dockerfile: iothumiditysensoremulator/Dockerfile
+    restart: on-failure
+    environment:
+      TARGET_URL: http://humidity-api/api/v1/Humidity
+    #depends_on:
+    #  humidity-api:
+    #    condition: service_healthy
+    #links: 
+    #  - humidity-api
+    networks:
+      - humidity-microservice
+    
+  precipitation-api:
+    image: ${DOCKER_REGISTRY-}precipitationservice
+    build:
+      context: .
+      dockerfile: PercipitationDataCollectionService/Dockerfile
+    restart: on-failure
+    ports: 
+      - 2080:80
+      - 20443:443
+    networks:
+      - precipitation-microservice
+
+  precipitation-sensor:
+    image: ${DOCKER_REGISTRY-}precipitationsensors
+    build:
+      context: .
+      dockerfile: PrecipitationSensor/Dockerfile
+    networks:
+      - precipitation-microservice
+
+  temperature-api:
+    image: ${DOCKER_REGISTRY-}temperatureapitemperature
+    build:
+      context: .
+      dockerfile: TemperatureAPI.Temperature/Dockerfile
+    restart: on-failure
+    ports: 
+      - 3080:80
+      - 30443:443
+    networks:
+      - temperature-microservice
+
+  temperature-sensor:
+    image: ${DOCKER_REGISTRY-}temperatureapisensor
+    build:
+      context: .
+      dockerfile: TemperatureAPI.Sensor/Dockerfile
+    networks:
+      - temperature-microservice
+
+
+networks:
+  humidity-microservice:
+  precipitation-microservice:
+  temperature-microservice:
+
+
+
+
+

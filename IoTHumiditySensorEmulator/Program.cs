@@ -16,4 +16,4 @@ for(int i = 0; i<=sensorCount; i++)
 }
 
 Console.WriteLine("Running all threads. Press any key to exit...");
-Console.ReadKey();
+// Console.ReadKey();
