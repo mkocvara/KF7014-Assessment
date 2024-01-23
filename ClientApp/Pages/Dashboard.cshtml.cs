@@ -20,21 +20,24 @@ namespace ClientApp.Pages
             _eventBus = eventBus;
 
             // Close obsolete subscription channels
-            foreach (SubscriptionResult subscription in _subscriptions)
+            lock (_subscriptions)
             {
-                subscription.Dispose();
-            }
-            _subscriptions.Clear();
+                foreach (SubscriptionResult subscription in _subscriptions)
+                {
+                    subscription.Dispose();
+                }
+                _subscriptions.Clear();
 
-            try
-            {
-                _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("PrecipitationSevereRisk", HandlePrecipSevereRiskMessage, x => x.WithTopic("Precipitation")));
-                //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
-                //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
-            }
-            catch
-            {
-                Console.WriteLine($"Could not subscribe to event bus; it is possible RabbitMQ is not running.");
+                try
+                {
+                    _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("PrecipitationSevereRisk", HandlePrecipSevereRiskMessage, x => x.WithTopic("Precipitation")));
+                    //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
+                    //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
+                }
+                catch
+                {
+                    Console.WriteLine($"Could not subscribe to event bus; it is possible RabbitMQ is not running.");
+                }
             }
         }
 
