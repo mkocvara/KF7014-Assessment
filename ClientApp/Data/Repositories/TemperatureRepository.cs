@@ -17,7 +17,7 @@ namespace ClientApp.Data.Repositories
             try
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                List<TemperatureMeasurement>? measurements = await http.GetFromJsonAsync<List<TemperatureMeasurement>>("/Temperature/History");
+                IEnumerable<TemperatureMeasurement>? measurements = await http.GetFromJsonAsync<IEnumerable<TemperatureMeasurement>>("/Temperature/History");
 
                 if (measurements == null)
                     return new List<TemperatureMeasurement>();
