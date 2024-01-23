@@ -37,7 +37,16 @@ namespace IoTHumiditySensorEmulator
                     Environment.Exit(1);
                 }
 
-                using (HttpClient client = new HttpClient())
+                // NEW SNIPPET HERE FOR SSL CHECK
+
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+
+                // END SNIPPET
+                // Make sure you delete the reference below as well
+                using (HttpClient client = new HttpClient(handler))
                 {
                     Random rng = new Random();
 
@@ -58,11 +67,18 @@ namespace IoTHumiditySensorEmulator
                         jsonReading
                     };
 
-                    HttpResponseMessage result = await client.PostAsync(URL, new StringContent(jsonArray.ToString(), Encoding.UTF8, "application/json"));
-                    Console.WriteLine($"Thread {ThreadID}: ({timestamp}) - {percentage}% @ {Latitude},{Longitude}; STATUS: {result.StatusCode}");
-                    if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    try
                     {
-                        Console.WriteLine(await result.Content.ReadAsStringAsync());
+                        HttpResponseMessage result = await client.PostAsync(URL, new StringContent(jsonArray.ToString(), Encoding.UTF8, "application/json"));
+                        Console.WriteLine($"Thread {ThreadID}: ({timestamp}) - {percentage}% @ {Latitude},{Longitude}; STATUS: {result.StatusCode}");
+                        if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                        {
+                            Console.WriteLine(await result.Content.ReadAsStringAsync());
+                        }
+
+                    } catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
                     }
                 }
 
