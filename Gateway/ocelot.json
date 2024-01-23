@@ -175,6 +175,54 @@
 			],
 
 			"DangerousAcceptAnyServerCertificateValidator": true
+		},
+		// Humidity
+		{
+			"DownstreamPathTemplate": "/api/v1/Humidity",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "humidity-api",
+					"Port": 443
+				}
+			],
+			"RateLimitOptions": {
+				"EnableRateLimiting": true,
+				"Period": "1s",
+				"PeriodTimespan": 1,
+				"Limit": 10
+			},
+			"UpstreamPathTemplate": "/Humidity",
+			"UpstreamHttpMethod": [
+				"GET",
+				"POST",
+				"PUT"
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
+		},
+		{
+			"DownstreamPathTemplate": "/api/v1/Humidity/{id}",
+			"DownstreamScheme": "https",
+			"DownstreamHostAndPorts": [
+				{
+					"Host": "humidity-api",
+					"Port": 443
+				}
+			],
+			"RateLimitOptions": {
+				"EnableRateLimiting": true,
+				"Period": "1s",
+				"PeriodTimespan": 1,
+				"Limit": 10
+			},
+			"UpstreamPathTemplate": "/Humidity/{id}",
+			"UpstreamHttpMethod": [
+				"GET",
+				"DELETE"
+			],
+
+			"DangerousAcceptAnyServerCertificateValidator": true
 		}
 	],
 	"GlobalConfiguration": {

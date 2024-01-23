@@ -56,7 +56,7 @@ services:
       dockerfile: iothumiditysensoremulator/Dockerfile
     restart: on-failure
     environment:
-      TARGET_URL: https://humidity-api/api/v1/Humidity
+      TARGET_URL: https://gateway/Humidity
     #depends_on:
     #  humidity-api:
     #    condition: service_healthy
@@ -111,8 +111,10 @@ services:
       context: .
       dockerfile: Gateway/Dockerfile
     ports:
-      - 5000:5000
+      - 80:80
+      - 443:443
     networks:
+      - external
       - humidity-microservice
       - precipitation-microservice
       - temperature-microservice
