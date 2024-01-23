@@ -11,7 +11,7 @@ services:
       HUMIDITY_MAX: 90
       MYSQL_URI: server=humidity-db;database=assignment;user=admin;password=jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr
     restart: on-failure
-    ports: 
+    ports: # Just for debugging
       - 1080:80
       - 10443:443
     #healthcheck:
@@ -38,7 +38,7 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr
       MYSQL_DATABASE: assignment
-    ports:
+    ports: # Just for debugging
       - 3306:3306
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
@@ -71,7 +71,7 @@ services:
       context: .
       dockerfile: PercipitationDataCollectionService/Dockerfile
     restart: on-failure
-    ports: 
+    ports: # Just for debugging
       - 2080:80
       - 20443:443
     networks:
@@ -91,7 +91,7 @@ services:
       context: .
       dockerfile: TemperatureAPI.Temperature/Dockerfile
     restart: on-failure
-    ports: 
+    ports: # Just for debugging
       - 3080:80
       - 30443:443
     networks:
@@ -115,6 +115,7 @@ services:
       - 8443:443
     networks:
       - external
+      - clientapp
       - humidity-microservice
       - precipitation-microservice
       - temperature-microservice
@@ -127,13 +128,25 @@ services:
     ports:
       - 80:80
       - 443:443
+    environment:
+      GATEWAY_URI: https://gateway
+      RABBITMQ_HOST: clientapp-mq
     networks:
-      - external
+      - clientapp
+
+  clientapp-mq:
+    image: rabbitmq:3-management-alpine
+    ports: # Just for debugging
+        - 5672:5672
+        - 15672:15672
+    networks:
+        - clientapp
 
 networks:
   humidity-microservice:
   precipitation-microservice:
   temperature-microservice:
+  clientapp:
   external:
 
 
