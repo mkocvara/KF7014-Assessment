@@ -25,6 +25,7 @@ namespace ClientApp.Data.Repositories
             {
                 List<PrecipitationMeasurement> precipMeasurements = (await _precipitationRepository.GetAll()).ToList();
                 List<TemperatureMeasurement> tempMeasurements = (await _temperatureRepository.GetAll()).ToList();
+                Console.WriteLine(tempMeasurements.Count());
                 // TODO: Get other measurements from humidity service
                 //List<HumidityMeasurement> humidityMeasurements = (await _humidityRepository.GetAll()).ToList();
                 List<HumidityMeasurement> humidityMeasurements = new();

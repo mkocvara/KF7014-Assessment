@@ -1,32 +1,142 @@
 ﻿@using ClientApp.Data;
+@using ClientApp.Data.Repositories;
 @inject IHttpClientFactory HttpClientFactory;
+@inject IReadOnlyRepository<WeatherMeasurement> AggregateRepository
 @{
     HttpClient _httpClient = HttpClientFactory.CreateClient("Gateway");
 
-    // Make an HTTP request to the API endpoint
-    List<TemperatureMeasurement> latestTemperatures = await _httpClient.GetFromJsonAsync<List<TemperatureMeasurement>>("/Temperature") ?? new List<TemperatureMeasurement>();
+    Console.WriteLine("Getting Data...");
+    IEnumerable<WeatherMeasurement> measurements = await AggregateRepository.GetAll();
+    if (!measurements.Any())
+    {
+        Console.WriteLine("Generating dummy data for development purposes...");
+
+        // Sample data for testing
+        PrecipitationMeasurement precip = new PrecipitationMeasurement
+                {
+                    Location = "City1",
+                    DateTime = DateTime.Now.Date,
+                    PrecipitationMm = 10.5f,
+                    Coverage = 0.8f,
+                    Snowfall = 5.0f,
+                    SnowDepth = 2.0f,
+                    SevereRisk = false
+                };
+
+        TemperatureMeasurement temp = new TemperatureMeasurement
+                {
+                    Location = "City1",
+                    DateTime = DateTime.Now.Date,
+                    Temperature = 25.0f
+                };
+
+        HumidityMeasurement humidity = new HumidityMeasurement
+                {
+                    Location = "City1",
+                    DateTime = DateTime.Now.Date,
+                    Humidity = 60.0f
+                };
+
+
+        WeatherMeasurement weatherData = new WeatherMeasurement(precip, temp, humidity);
+        Console.WriteLine($"Adding this data point: {weatherData}");
+
+        measurements = measurements.Append(weatherData);
+    }
+
+    Console.WriteLine($"Number of measurements: {measurements.Count()}");
+
 }
 
 
-<h3>History</h3>
-<table class="table table-striped table-sm">
-    <thead>
-        <tr>
-            <th>Sensor ID</th>
-            <th>Sensor Description</th>
-            <th>Latest Temperature</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var temperature in latestTemperatures)
-        {
-            <tr>
-                <td>@temperature.SensorID</td>
-                <td>@temperature.Location</td>
-                <td>@temperature.Temperature</td>
-                <td>@temperature.DateTime</td>
-            </tr>
+<div>
+    <label for="dataSelector">Select Data:</label>
+    <select id="dataSelector" onchange="updateChart()">
+        <option value="temperature">Temperature</option>
+        <option value="precipitation">Precipitation</option>
+        <option value="humidity">Humidity</option>
+    </select>
+</div>
+<canvas id="sensorChart" width="400" height="200"></canvas>
+<!-- Include 'chart.js' library and the date adapter -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<script>
+    //import {getOptions} from './js/HistoryDash.js';
+
+    var fullData = @Json.Serialize(measurements.ToList());
+    console.log(`FULL DATA:`);
+    console.log(fullData)
+
+    var selectedData = {};
+
+    // Get the canvas element and create a chart
+    var ctx = document.getElementById('sensorChart').getContext('2d');
+    var sensorChart = new Chart(ctx, {
+        type: 'line', // Chart type (bar, line, etc.)
+        data: {
+            // labels: selectedDates.map(date => new Date(date).toLocaleDateString()),
+            datasets: [
+                {
+                    label: 'Temperature',
+                    data: selectedData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    showLine: true
+                }
+            ],
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time', // Specify x-axis type as time
+                    time: {
+                        unit: 'day' // Display one label per day
+                    },
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
-    </tbody>
-</table>
+    });
+
+    function compareDates(a, b) {
+        return new Date(a.x) - new Date(b.x);
+    }
+
+
+    // Update based on the selector element
+    function updateChart() {
+        var selector = document.getElementById('dataSelector');
+        var selectedValue = selector.options[selector.selectedIndex].value;
+        var selectedText = selector.options[selector.selectedIndex].text;
+
+
+        // Update selectedData based on the user's selection
+        if (selectedValue === 'temperature') {
+            selectedData = fullData.map(m => ({ x: m.dateTime, y: m.temperatureC }));
+        } else if (selectedValue === 'precipitation') {
+            selectedData = fullData.map(m => ({ x: m.dateTime, y: m.precipitationMm }));
+        } else if (selectedValue === 'humidity') {
+            selectedData = fullData.map(m => ({ x: m.dateTime, y: m.humidity }));
+        }
+
+        // Clean and sort by date
+        selectedData.filter(m => m.x !== null && m.y !== null);
+        selectedData.sort(compareDates);
+
+        console.log(`SelectedData Sorted:`);
+        console.log(selectedData)
+
+        // Update the chart data and re-render
+        sensorChart.data.datasets[0].data = selectedData;
+        sensorChart.data.datasets[0].label = selectedText;
+        sensorChart.update();
+    }
+
+    updateChart();
+
+</script>
