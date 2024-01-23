@@ -80,10 +80,10 @@ namespace ClientApp.Data.Repositories
                     tempMeasurementsFiltered,
                     pm => new { loc = pm.Location, date = pm.DateTime.Value.Date },
                     tm => new { loc = tm.Location, date = tm.DateTime.Value.Date },
-                    (pm) => new WeatherMeasurement().GetDataFromPrecipitationMeasurement(pm),
-                    (tm) => new WeatherMeasurement().GetDataFromTemperatureMeasurement(tm),
-                    (pm, tm) => new WeatherMeasurement().GetDataFromPrecipitationMeasurement(pm)
-                                                        .GetDataFromTemperatureMeasurement(tm)
+                    (pm) => new WeatherMeasurement().CopyDataFromPrecipitationMeasurement(pm),
+                    (tm) => new WeatherMeasurement().CopyDataFromTemperatureMeasurement(tm),
+                    (pm, tm) => new WeatherMeasurement().CopyDataFromPrecipitationMeasurement(pm)
+                                                        .CopyDataFromTemperatureMeasurement(tm)
                 );
 
                 measurements = measurements.FullJoin(
@@ -91,8 +91,8 @@ namespace ClientApp.Data.Repositories
                     wm => new { loc = wm.Location, date = wm.DateTime.Value.Date },
                     hm => new { loc = hm.Location, date = hm.DateTime.Value.Date },
                     (wm) => wm,
-                    (hm) => new WeatherMeasurement().GetDataFromHumidityMeasurement(hm),
-                    (wm, hm) => wm.GetDataFromHumidityMeasurement(hm)
+                    (hm) => new WeatherMeasurement().CopyDataFromHumidityMeasurement(hm),
+                    (wm, hm) => wm.CopyDataFromHumidityMeasurement(hm)
                 ); 
 #pragma warning restore CS8629
 
@@ -139,10 +139,10 @@ namespace ClientApp.Data.Repositories
                     tmHasDate,
                     pm => new { date = pm.DateTime.Value.Date },
                     tm => new { date = tm.DateTime.Value.Date },
-                    (pm) => new WeatherMeasurement().GetDataFromPrecipitationMeasurement(pm),
-                    (tm) => new WeatherMeasurement().GetDataFromTemperatureMeasurement(tm),
-                    (pm, tm) => new WeatherMeasurement().GetDataFromPrecipitationMeasurement(pm)
-                                                        .GetDataFromTemperatureMeasurement(tm)
+                    (pm) => new WeatherMeasurement().CopyDataFromPrecipitationMeasurement(pm),
+                    (tm) => new WeatherMeasurement().CopyDataFromTemperatureMeasurement(tm),
+                    (pm, tm) => new WeatherMeasurement().CopyDataFromPrecipitationMeasurement(pm)
+                                                        .CopyDataFromTemperatureMeasurement(tm)
                 );
 
                 measurements = measurements.FullJoin(
@@ -150,8 +150,8 @@ namespace ClientApp.Data.Repositories
                     wm => new { date = wm.DateTime.Value.Date },
                     hm => new { date = hm.DateTime.Value.Date },
                     (wm) => wm,
-                    (hm) => new WeatherMeasurement().GetDataFromHumidityMeasurement(hm),
-                    (wm, hm) => wm.GetDataFromHumidityMeasurement(hm)
+                    (hm) => new WeatherMeasurement().CopyDataFromHumidityMeasurement(hm),
+                    (wm, hm) => wm.CopyDataFromHumidityMeasurement(hm)
                 );
 #pragma warning restore CS8629
 
@@ -192,11 +192,11 @@ namespace ClientApp.Data.Repositories
 
                 WeatherMeasurement wm = new();
                 if (precipMeasurement.DateTime.HasValue && precipMeasurement.DateTime.Value.Date == latestDate)
-                    wm.GetDataFromPrecipitationMeasurement(precipMeasurement);
+                    wm.CopyDataFromPrecipitationMeasurement(precipMeasurement);
                 if (tempMeasurement.DateTime.HasValue && tempMeasurement.DateTime.Value.Date == latestDate)
-                    wm.GetDataFromTemperatureMeasurement(tempMeasurement);
+                    wm.CopyDataFromTemperatureMeasurement(tempMeasurement);
                 if (humidityMeasurement.DateTime.HasValue && humidityMeasurement.DateTime.Value.Date == latestDate)
-                    wm.GetDataFromHumidityMeasurement(humidityMeasurement);
+                    wm.CopyDataFromHumidityMeasurement(humidityMeasurement);
 
                 return wm;
             }

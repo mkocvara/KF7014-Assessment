@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoTHumiditySensorEmulator",
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{EFE8B576-0627-45E3-8E0D-AA4C453AC6B8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientApp.Test", "ClientApp.Test\ClientApp.Test.csproj", "{4B950EEF-D455-4717-9E2A-6CA50238DE18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{EFE8B576-0627-45E3-8E0D-AA4C453AC6B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFE8B576-0627-45E3-8E0D-AA4C453AC6B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFE8B576-0627-45E3-8E0D-AA4C453AC6B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B950EEF-D455-4717-9E2A-6CA50238DE18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B950EEF-D455-4717-9E2A-6CA50238DE18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B950EEF-D455-4717-9E2A-6CA50238DE18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B950EEF-D455-4717-9E2A-6CA50238DE18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
