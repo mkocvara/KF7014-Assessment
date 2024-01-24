@@ -1,0 +1,122 @@
+[
+  {
+    "Location": "Newcastle upon Tyne",
+    "Interval": 1
+  },
+  {
+    "Location": "Sunderland",
+    "Interval": 10
+  },
+  {
+    "Location": "Durham",
+    "Interval": 30
+  },
+  {
+    "Location": "Middlesborough",
+    "Interval": 5
+  },
+  {
+    "Location": "Liverpool",
+    "Interval": 60
+  },
+  {
+    "Location": "Manchester",
+    "Interval": 120
+  },
+  {
+    "Location": "London",
+    "Interval": 15
+  },
+  {
+    "Location": "Oxford",
+    "Interval": 180
+  },
+  {
+    "Location": "Cambridge",
+    "Interval": 1440
+  },
+  {
+    "Location": "Birmingham",
+    "Interval": 720
+  },
+  {
+    "Location": "Canterbury",
+    "Interval": 360
+  },
+  {
+    "Location": "Nottingham",
+    "Interval": 90
+  },
+  {
+    "Location": "Derby",
+    "Interval": 45
+  },
+  {
+    "Location": "Bath",
+    "Interval": 12
+  },
+  {
+    "Location": "Worcester",
+    "Interval": 123
+  },
+  {
+    "Location": "York",
+    "Interval": 1234
+  },
+  {
+    "Location": "Stoke-on-Trent",
+    "Interval": 12345
+  },
+  {
+    "Location": "Leicester",
+    "Interval": 100
+  },
+  {
+    "Location": "Sheffield",
+    "Interval": 1
+  },
+  {
+    "Location": "Leeds",
+    "Interval": 2.5
+  },
+  {
+    "Location": "Chester",
+    "Interval": 13.25
+  },
+  {
+    "Location": "Exeter",
+    "Interval": 6.33
+  },
+  {
+    "Location": "Carlisle",
+    "Interval": 80
+  },
+  {
+    "Location": "Norwich",
+    "Interval": 1111
+  },
+  {
+    "Location": "Bradford",
+    "Interval": 2880
+  },
+  {
+    "Location": "Coventry",
+    "Interval": 564
+  },
+  {
+    "Location": "Runcorn",
+    "Interval": 687
+  },
+  {
+    "Location": "Portsmouth",
+    "Interval": 22
+  },
+  {
+    "Location": "Bristol",
+    "Interval": 3000
+  },
+  {
+    "Location": "Plymouth",
+    "Interval": 807
+  }
+]

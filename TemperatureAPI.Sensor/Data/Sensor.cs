@@ -9,6 +9,11 @@ namespace TemperatureAPI.Sensor.Data
 {
     public class Sensor
     {
+        public struct InitData
+        {
+            public string Location { get; set; }
+        }
+
         public int Id { get; set; }
         public string Description { get; set; } = "";
         public int IntervalInMinutes { get; set; }
@@ -32,6 +37,8 @@ namespace TemperatureAPI.Sensor.Data
             _client.DefaultRequestHeaders.Add("APIKey", "85f82393-59ca-485e-99f3-01d9915bd195");
             SendTemperature();
         }
+
+
 
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {

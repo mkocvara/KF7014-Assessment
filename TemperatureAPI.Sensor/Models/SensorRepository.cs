@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using System.Diagnostics;
+using System.Text.Json;
 using TemperatureAPI.Sensor.Data;
 
 namespace TemperatureAPI.Sensor.Models
@@ -19,11 +20,38 @@ namespace TemperatureAPI.Sensor.Models
         {
             Debug.WriteLine("Sensor repository..............................................");
 
-            for (int id = 1; id <= 30; id++)
+            try
             {
-                sensors.Add(new Data.Sensor(nextId++,
-                    "Northumberland Street, Newcastle Upon Tyne"));
+                string fileName = "sensors.json";
+                string jsonString = File.ReadAllText(fileName);
+
+                if (string.IsNullOrEmpty(jsonString))
+                    throw new InvalidOperationException("No data was read from the json file.");
+
+                IEnumerable<Data.Sensor.InitData>? initData = JsonSerializer.Deserialize<IEnumerable<Data.Sensor.InitData>>(jsonString);
+
+                if (initData == null || !initData.Any())
+                    throw new InvalidOperationException("No data was deserialized from the json file.");
+
+                foreach (var data in initData.Take(30))
+                {
+                    sensors.Add(new Data.Sensor(nextId++, data.Location));
+                }
+
+                Debug.WriteLine("Successfully Deserialized 30 sensors from json!");
+
             }
+            catch (Exception e)
+            {
+                Console.WriteLine($"An exception occured: {e.Message}");
+                for (int id = 1; id <= 30; id++)
+                {
+                    sensors.Add(new Data.Sensor(nextId++,
+                        "Northumberland Street, Newcastle Upon Tyne"));
+                }
+            }
+
+            
         }
 
         public List<SensorModel> GetAllSensors()
@@ -96,5 +124,38 @@ namespace TemperatureAPI.Sensor.Models
             }
             sensors.Remove(sensor);
         }
+
+        // Deserialises sensors.json and adds the sensors to the list of sensors.
+        // Returns false if deserialisation fails, true otherwise.
+        private bool TryDeserialiseJson()
+        {
+            try
+            {
+                string fileName = "sensors.json";
+                string jsonString = File.ReadAllText(fileName);
+
+                if (string.IsNullOrEmpty(jsonString))
+                    return false;
+
+                IEnumerable<Data.Sensor.InitData>? initData = JsonSerializer.Deserialize<IEnumerable<Data.Sensor.InitData>>(jsonString);
+
+                if (initData == null || !initData.Any())
+                    return false;
+
+                foreach (Data.Sensor.InitData data in initData)
+                {
+                    Data.Sensor s = new(data);
+                    Sensors.Add(s);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
+
+
 }
