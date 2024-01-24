@@ -5,8 +5,42 @@ namespace IoTHumiditySensorEmulator
 {
     internal class Sensor
     {
+        private static List<string> Locations = new List<string>() {
+            "Newcastle upon Tyne",
+            "Sunderland",
+            "Durham",
+            "Middlesborough",
+            "Liverpool",
+            "Manchester",
+            "London",
+            "Oxford",
+            "Cambridge",
+            "Birmingham",
+            "Canterbury",
+            "Nottingham",
+            "Derby",
+            "Bath",
+            "Worcester",
+            "York",
+            "Stoke-on-Trent",
+            "Leicester",
+            "Sheffield",
+            "Leeds",
+            "Chester",
+            "Exeter",
+            "Carlisle",
+            "Norwich",
+            "Bradford",
+            "Coventry",
+            "Runcorn",
+            "Portsmouth",
+            "Bristol",
+            "Plymouth"
+        };
+
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string Location { get; set; }
 
         private int SendInterval { get; set; } // measured in seconds
 
@@ -19,9 +53,12 @@ namespace IoTHumiditySensorEmulator
                 60*30, 60*60, 60*60*3
             };
 
+
+
             Random rng = new Random();
-            Latitude = rng.NextDouble() * 180 - 90; ;
-            Longitude = rng.NextDouble() * 360 - 180; ;
+            Latitude = rng.NextDouble() * 180 - 90;
+            Longitude = rng.NextDouble() * 360 - 180;
+            Location = Locations[rng.Next() % Locations.Count];
             SendInterval = SendIntervalOptions[rng.Next() % 3];
             ThreadID = threadID;
         }
@@ -59,7 +96,8 @@ namespace IoTHumiditySensorEmulator
                         { "timestamp", timestamp },
                         { "percentage", percentage },
                         { "latitude", Latitude },
-                        { "longitude", Longitude }
+                        { "longitude", Longitude },
+                        { "location", Location }
                     };
 
                     JsonArray jsonArray = new JsonArray

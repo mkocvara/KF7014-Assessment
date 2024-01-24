@@ -22,7 +22,7 @@
 
                 <th scope="col">Temperature (&degC)</th>
 
-                <th scope="col">Humidity (uhh??)</th>
+                <th scope="col">Humidity (%)</th>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +42,7 @@
                     <td @* class=@riskClass *@>@measurement.TemperatureC</td>
 
                     @{/*riskClass = measurement.PrecipitationSevereRisk ? "\"text-danger fw-bold\"" : "";*/}
-                    <td @* class=@riskClass *@>@measurement.Humidity</td>
+                    <td @* class=@riskClass *@>@(measurement.Humidity.HasValue? measurement.Humidity.Value.ToString("F"):"Not Available")</td>
                 </tr>
             }
         </tbody>

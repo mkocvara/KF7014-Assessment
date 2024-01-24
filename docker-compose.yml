@@ -129,8 +129,10 @@ services:
       - 80:80
       - 443:443
     environment:
-      GATEWAY_URI: https://gateway
+      GATEWAY_URI: http://gateway
       RABBITMQ_HOST: clientapp-mq
+      HUMIDITY_MIN: 30
+      HUMIDITY_MAX: 90
     networks:
       - clientapp
 

@@ -16,7 +16,7 @@
         public float? TemperatureC { get; set; }
 
         // Humidity
-        public float? Humidity { get; set; }
+        public double? Humidity { get; set; }
 
 
         public WeatherMeasurement() { }
@@ -30,8 +30,8 @@
                 badData = true;
             }
 
-            if (!precip.DateTime.HasValue || !temp.DateTime.HasValue || !humidity.DateTime.HasValue ||
-                precip.DateTime.Value.Date.CompareTo(temp.DateTime.Value.Date) != 0 || temp.DateTime.Value.Date.CompareTo(humidity.DateTime.Value.Date) != 0)
+            if (!precip.DateTime.HasValue || !temp.DateTime.HasValue || !humidity.Timestamp.HasValue ||
+                precip.DateTime.Value.Date.CompareTo(temp.DateTime.Value.Date) != 0 || temp.DateTime.Value.Date.CompareTo(humidity.Timestamp.Value.Date) != 0)
             {
                 Console.WriteLine("Error: Measurements must be from the same day.");
                 badData = true;
@@ -51,7 +51,7 @@
 
             TemperatureC = temp.Temperature;
 
-            Humidity = humidity.Humidity;
+            Humidity = humidity.Percentage;
         }
 
         public WeatherMeasurement(string? location, DateTime? dateTime, 
@@ -99,10 +99,10 @@
 
         public WeatherMeasurement GetDataFromHumidityMeasurement(HumidityMeasurement humidity)
         {
-            if (!CheckLocationAndDate(humidity.Location, humidity.DateTime))
+            if (!CheckLocationAndDate(humidity.Location, humidity.Timestamp))
                 return this;
 
-            Humidity = humidity.Humidity;
+            Humidity = humidity.Percentage;
 
             return this;
         }

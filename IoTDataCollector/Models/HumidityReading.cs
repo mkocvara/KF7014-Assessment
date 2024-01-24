@@ -24,6 +24,9 @@ namespace IoTHumidityDataCollector.Models
         [Range(-180.0, 180.0,
             ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public double Longitude { get; set; }
+
+        [Required]
+        public string? Location { get; set; }
         
         public override string ToString()
         {
