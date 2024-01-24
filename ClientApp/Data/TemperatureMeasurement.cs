@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int SensorID { get; set; } = -1;
         public string? Location { get; set; } = string.Empty;
-        public int? Temperature { get; set; } = -1000;
+        public float? Temperature { get; set; } = -1000f;
         public DateTime? DateTime { get; set; }
 
         public TemperatureMeasurement() { }
@@ -14,7 +14,7 @@
         {
             Location = location;
             DateTime = dateTime;
-            Temperature = (int)tempC;
+            Temperature = tempC;
         }
     }
 }

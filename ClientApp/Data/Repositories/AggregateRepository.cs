@@ -26,6 +26,7 @@ namespace ClientApp.Data.Repositories
                 List<PrecipitationMeasurement> precipMeasurements = (await _precipitationRepository.GetAll()).ToList();
                 List<TemperatureMeasurement> tempMeasurements = (await _temperatureRepository.GetAll()).ToList();
                 List<HumidityMeasurement> humidityMeasurements = (await _humidityRepository.GetAll()).ToList();
+                Console.WriteLine(tempMeasurements.Count());
 
                 // DEBUG TEMP
                 tempMeasurements.Add(new TemperatureMeasurement("Newcastle upon Tyne", DateTime.Today - TimeSpan.FromDays(1), 10));

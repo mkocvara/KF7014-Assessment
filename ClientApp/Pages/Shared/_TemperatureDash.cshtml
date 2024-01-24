@@ -5,7 +5,6 @@
 @{
     HttpClient _httpClient = HttpClientFactory.CreateClient("Gateway");
 
-    // Make an HTTP request to the API endpoint
     IEnumerable<TemperatureMeasurement> latestTemperatures = await TemperatureRepository.GetLatestInEveryLocation();
 }
 
