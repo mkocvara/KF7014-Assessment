@@ -13,7 +13,7 @@ namespace ClientApp.Pages
 
         public static int SeverePrecipitationAlertId { get; set; } = 0;
         //public bool SevereTemperatureAlertId { get; set; } = false;
-        //public bool SevereHumidityAlertID { get; set; } = false;
+        public int SevereHumidityAlertID { get; set; } = 0;
 
         public DashboardModel(IBus eventBus)
         {
@@ -32,7 +32,7 @@ namespace ClientApp.Pages
                 {
                     _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("PrecipitationSevereRisk", HandlePrecipSevereRiskMessage, x => x.WithTopic("Precipitation")));
                     //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
-                    //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
+                    _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
                 }
                 catch
                 {
@@ -68,6 +68,11 @@ namespace ClientApp.Pages
             return Partial("_TemperatureDash");
         }
 
+        public PartialViewResult OnGetHumidityDash()
+        {
+            return Partial("_HumidityDash");
+        }
+
         void HandlePrecipSevereRiskMessage(int message)
         {
             SeverePrecipitationAlertId = message;
@@ -75,6 +80,17 @@ namespace ClientApp.Pages
 #if DEBUG
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"=== MESSAGE RECEIVED; measurement with ID={message} poses a severe risk! ===");
+            Console.ResetColor();
+#endif
+        }
+
+        void HandleHumiditySevereRiskMessage(int message)
+        {
+            SevereHumidityAlertID = message;
+
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"=== MESSAGE RECEIVED; Humidity measurement with ID={message} poses a severe risk! ===");
             Console.ResetColor();
 #endif
         }

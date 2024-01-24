@@ -1,0 +1,52 @@
+﻿@using ClientApp.Data;
+@using ClientApp.Data.Repositories;
+@inject IReadOnlyRepository<HumidityMeasurement> hRepository;
+@model int
+@{
+    IEnumerable<HumidityMeasurement> humidityMeasurements = await hRepository.GetLatestInEveryLocation();
+
+    HumidityMeasurement SevereHMeasurement = null;
+    if(Model > 0)
+    {
+        SevereHMeasurement = humidityMeasurements.FirstOrDefault(m => m.Id == Model);
+    }
+}
+
+@if (humidityMeasurements.Any())
+{
+    if (SevereHMeasurement != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Severe Weather Alert!</h4>
+            <p>Severe precipitation has been detected at @SevereHMeasurement.Location (<b>@SevereHMeasurement.Latitude</b>, <b>@SevereHMeasurement.Longitude</b>)</p>
+        </div>
+    }
+
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Location</th>
+                <th scope="col">Latitude</th>
+                <th scope="col">Longitude</th>
+                <th scope="col">Last Measurement</th>
+                <th scope="col">Humidity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (HumidityMeasurement measurement in humidityMeasurements.OrderBy(m => m.Location))
+            {
+                <tr class="@(measurement.Percentage < HumidityRepository.HUMIDITY_MIN || measurement.Percentage > HumidityRepository.HUMIDITY_MAX  ? "text-danger fw-bold" : "")">
+                    <td>@measurement.Location</td>
+                    <td>@Math.Round(Math.Abs(measurement.Latitude), 4)&deg; @(measurement.Latitude >= 0 ? "N":"S")</td>
+                    <td>@Math.Round(Math.Abs(measurement.Longitude), 4)&deg; @(measurement.Longitude >= 0 ? "E":"V")</td>
+                    <td>@measurement.Timestamp</td>
+                    <td>@measurement.Percentage.ToString("F")%</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><i>No measurements found.</i></p>
+}

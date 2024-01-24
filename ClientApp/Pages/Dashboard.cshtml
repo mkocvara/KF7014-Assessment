@@ -30,7 +30,7 @@
 
 <h2>Humidity</h2>
 <div id="humidity-dashboard">
-    <p>TBA</p>
+    <partial name="_HumidityDash" model="0" />
 </div>
 
 <h2>Aggregated</h2>
@@ -48,9 +48,14 @@
     var interval = setInterval(Update, intervalTime);
 
     function Update() {
+        $("#precipitation-dashboard").empty();
+        $("#temperature-dashboard").empty();
+        $("#humidity-dashboard").empty();
+        $("#aggregate-dashboard").empty();
+
         $("#precipitation-dashboard").load("/dashboard?handler=PrecipitationDash");
         $("#temperature-dashboard").load("/dashboard?handler=TemperatureDash");
-        //$("#humidity-dashboard").load("/dashboard?handler=HumidityDash");
+        $("#humidity-dashboard").load("/dashboard?handler=HumidityDash");
         $("#aggregate-dashboard").load("/dashboard?handler=AggregateDash");
         //$("#history-dashboard").load("/dashboard?handler=HistoryDash");
     }

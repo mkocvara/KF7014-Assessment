@@ -8,15 +8,15 @@ namespace ClientApp.Data.Repositories
     {
         private readonly IReadOnlyRepository<PrecipitationMeasurement> _precipitationRepository;
         private readonly IReadOnlyRepository<TemperatureMeasurement> _temperatureRepository;
-        //private readonly IReadOnlyRepository<TemperatureMeasurement> _humidityRepository;
+        private readonly IReadOnlyRepository<HumidityMeasurement> _humidityRepository;
 
         public AggregateRepository(IReadOnlyRepository<PrecipitationMeasurement> precipitationRepository,
-                                   IReadOnlyRepository<TemperatureMeasurement> temperatureRepository/*,
-                                   IReadOnlyRepository<HumidityMeasurement> humidityRepository*/)
+                                   IReadOnlyRepository<TemperatureMeasurement> temperatureRepository,
+                                   IReadOnlyRepository<HumidityMeasurement> humidityRepository)
         {
             _precipitationRepository = precipitationRepository;
             _temperatureRepository = temperatureRepository;
-            //_humidityRepository = humidityRepository;
+            _humidityRepository = humidityRepository;
         }
 
         public async Task<IEnumerable<WeatherMeasurement>> GetAll()
@@ -25,25 +25,23 @@ namespace ClientApp.Data.Repositories
             {
                 List<PrecipitationMeasurement> precipMeasurements = (await _precipitationRepository.GetAll()).ToList();
                 List<TemperatureMeasurement> tempMeasurements = (await _temperatureRepository.GetAll()).ToList();
-                // TODO: Get other measurements from humidity service
-                //List<HumidityMeasurement> humidityMeasurements = (await _humidityRepository.GetAll()).ToList();
-                List<HumidityMeasurement> humidityMeasurements = new();
+                List<HumidityMeasurement> humidityMeasurements = (await _humidityRepository.GetAll()).ToList();
 
                 // DEBUG TEMP
                 tempMeasurements.Add(new TemperatureMeasurement("Newcastle upon Tyne", DateTime.Today - TimeSpan.FromDays(1), 10));
                 tempMeasurements.Add(new TemperatureMeasurement("Leeds", DateTime.Today - TimeSpan.FromDays(2), 154.4f));
                 tempMeasurements.Add(new TemperatureMeasurement("Nottingham", DateTime.Today + TimeSpan.FromDays(1), 124.4f));
 
-                humidityMeasurements.Add(new HumidityMeasurement("Newcastle upon Tyne", DateTime.Today - TimeSpan.FromDays(1), 50));
-                humidityMeasurements.Add(new HumidityMeasurement("Newcastle upon Tyne", DateTime.Today - TimeSpan.FromDays(1), 34.7f));
-                humidityMeasurements.Add(new HumidityMeasurement("Nottingham", DateTime.Today + TimeSpan.FromDays(1), 74.4f));
+                // humidityMeasurements.Add(new HumidityMeasurement("Newcastle upon Tyne", Timestamp.Today - TimeSpan.FromDays(1), 50));
+                // humidityMeasurements.Add(new HumidityMeasurement("Newcastle upon Tyne", Timestamp.Today - TimeSpan.FromDays(1), 34.7f));
+                // humidityMeasurements.Add(new HumidityMeasurement("Nottingham", Timestamp.Today + TimeSpan.FromDays(1), 74.4f));
 
                 // ignore measurements without a date or location, as they cannot be aggregated
                 IEnumerable<PrecipitationMeasurement> pmHasDateAndLoc = precipMeasurements.Where(pm => pm.DateTime.HasValue && pm.Location is not null);
                 IEnumerable<TemperatureMeasurement> tmHasDateAndLoc = tempMeasurements.Where(tm => tm.DateTime.HasValue && tm.Location is not null);
-                IEnumerable<HumidityMeasurement> hmHasDateAndLoc = humidityMeasurements.Where(hm => hm.DateTime.HasValue && hm.Location is not null);
+                IEnumerable<HumidityMeasurement> hmHasDateAndLoc = humidityMeasurements.Where(hm => hm.Timestamp is not null);
 
-#pragma warning disable CS8629 // DateTime cannot be null here.
+#pragma warning disable CS8629 // Timestamp cannot be null here.
                 // where measurements share the same location and date, keep only the most recent
                 IEnumerable<IGrouping<string?, PrecipitationMeasurement>> pmByLocation = pmHasDateAndLoc.GroupBy(pm => pm.Location);
                 List<PrecipitationMeasurement> precipMeasurementsFiltered = new();
@@ -55,22 +53,22 @@ namespace ClientApp.Data.Repositories
                     precipMeasurementsFiltered.AddRange(onePerDay);
                 }
 
-                IEnumerable<IGrouping<string?, TemperatureMeasurement>> tmByLocation = tmHasDateAndLoc.GroupBy(pm => pm.Location);
+                IEnumerable<IGrouping<string?, TemperatureMeasurement>> tmByLocation = tmHasDateAndLoc.GroupBy(tm => tm.Location);
                 List<TemperatureMeasurement> tempMeasurementsFiltered = new();
                 foreach (IGrouping<string?, TemperatureMeasurement> group in tmByLocation)
                 {
-                    IEnumerable<TemperatureMeasurement> onePerDay = group.GroupBy(pm => pm.DateTime.Value.Date)
-                                                                           .Select(g => g.OrderBy(pm => pm.DateTime)
+                    IEnumerable<TemperatureMeasurement> onePerDay = group.GroupBy(tm => tm.DateTime.Value.Date)
+                                                                           .Select(g => g.OrderBy(tm => tm.DateTime)
                                                                                          .Last());
                     tempMeasurementsFiltered.AddRange(group);
                 }
 
-                IEnumerable<IGrouping<string?, HumidityMeasurement>> hmByLocation = hmHasDateAndLoc.GroupBy(pm => pm.Location);
+                IEnumerable<IGrouping<DateTime?, HumidityMeasurement>> hmByLocation = hmHasDateAndLoc.GroupBy(hm => hm.Timestamp);
                 List<HumidityMeasurement> humidityMeasurementsFiltered = new();
-                foreach (IGrouping<string?, HumidityMeasurement> group in hmByLocation)
+                foreach (IGrouping<DateTime?, HumidityMeasurement> group in hmByLocation)
                 {
-                    IEnumerable<HumidityMeasurement> onePerDay = group.GroupBy(pm => pm.DateTime.Value.Date)
-                                                                           .Select(g => g.OrderBy(pm => pm.DateTime)
+                    IEnumerable<HumidityMeasurement> onePerDay = group.GroupBy(hm => hm.Timestamp.Value.Date)
+                                                                           .Select(g => g.OrderBy(hm => hm.Timestamp)
                                                                                          .Last());
                     humidityMeasurementsFiltered.AddRange(group);
                 }
@@ -86,14 +84,16 @@ namespace ClientApp.Data.Repositories
                                                         .GetDataFromTemperatureMeasurement(tm)
                 );
 
+
+                
                 measurements = measurements.FullJoin(
                     humidityMeasurementsFiltered,
                     wm => new { loc = wm.Location, date = wm.DateTime.Value.Date },
-                    hm => new { loc = hm.Location, date = hm.DateTime.Value.Date },
+                    hm => new { loc = hm.Location, date = hm.Timestamp.Value.Date },
                     (wm) => wm,
                     (hm) => new WeatherMeasurement().GetDataFromHumidityMeasurement(hm),
-                    (wm, hm) => wm.GetDataFromHumidityMeasurement(hm)
-                ); 
+                    (wm, hm) => wm.GetDataFromHumidityMeasurement(hm) 
+                );
 #pragma warning restore CS8629
 
                 if (measurements == null)
@@ -120,9 +120,9 @@ namespace ClientApp.Data.Repositories
                 // ignore measurements without a date, as they cannot be aggregated
                 IEnumerable<PrecipitationMeasurement> pmHasDate = precipMeasurements.Where(pm => pm.DateTime.HasValue);
                 IEnumerable<TemperatureMeasurement> tmHasDate = tempMeasurements.Where(tm => tm.DateTime.HasValue);
-                IEnumerable<HumidityMeasurement> hmHasDate = humidityMeasurements.Where(hm => hm.DateTime.HasValue);
+                IEnumerable<HumidityMeasurement> hmHasDate = humidityMeasurements.Where(hm => hm.Timestamp.HasValue);
 
-#pragma warning disable CS8629 // DateTime cannot be null here.
+#pragma warning disable CS8629 // Timestamp cannot be null here.
                 // where measurements share the same date, keep only the most recent
                 pmHasDate = pmHasDate.GroupBy(pm => pm.DateTime.Value.Date)
                                                  .Select(g => g.OrderBy(pm => pm.DateTime)
@@ -130,8 +130,8 @@ namespace ClientApp.Data.Repositories
                 tmHasDate = tmHasDate.GroupBy(tm => tm.DateTime.Value.Date)
                                                  .Select(g => g.OrderBy(tm => tm.DateTime)
                                                                .Last());
-                hmHasDate = hmHasDate.GroupBy(hm => hm.DateTime.Value.Date)
-                                                 .Select(g => g.OrderBy(hm => hm.DateTime)
+                hmHasDate = hmHasDate.GroupBy(hm => hm.Timestamp.Value.Date)
+                                                 .Select(g => g.OrderBy(hm => hm.Timestamp)
                                                                .Last());
 
                 // full outer join measurements on date to create aggregate measurements
@@ -148,7 +148,7 @@ namespace ClientApp.Data.Repositories
                 measurements = measurements.FullJoin(
                     hmHasDate,
                     wm => new { date = wm.DateTime.Value.Date },
-                    hm => new { date = hm.DateTime.Value.Date },
+                    hm => new { date = hm.Timestamp.Value.Date },
                     (wm) => wm,
                     (hm) => new WeatherMeasurement().GetDataFromHumidityMeasurement(hm),
                     (wm, hm) => wm.GetDataFromHumidityMeasurement(hm)
@@ -179,23 +179,22 @@ namespace ClientApp.Data.Repositories
             {
                 PrecipitationMeasurement precipMeasurement = await _precipitationRepository.GetLatestInLocation(location) ?? new();
                 TemperatureMeasurement tempMeasurement = await _temperatureRepository.GetLatestInLocation(location) ?? new();
-                // TODO: Get other measurements from other services
-                HumidityMeasurement humidityMeasurement = new();
+                HumidityMeasurement humidityMeasurement = await _humidityRepository.GetLatestInLocation(location)?? new();
 
                 DateTime? latestDate = null;
                 if (precipMeasurement.DateTime.HasValue)
                     latestDate = precipMeasurement.DateTime.Value.Date;
                 if (tempMeasurement.DateTime.HasValue)
                     latestDate = latestDate.HasValue ? new List<DateTime> { latestDate.Value.Date, tempMeasurement.DateTime.Value.Date }.Max() : tempMeasurement.DateTime.Value.Date;
-                if (humidityMeasurement.DateTime.HasValue)
-                    latestDate = latestDate.HasValue ? new List<DateTime> { latestDate.Value.Date, humidityMeasurement.DateTime.Value.Date }.Max() : humidityMeasurement.DateTime.Value.Date;
+                if (humidityMeasurement.Timestamp.HasValue)
+                    latestDate = latestDate.HasValue ? new List<DateTime> { latestDate.Value.Date, humidityMeasurement.Timestamp.Value.Date }.Max() : humidityMeasurement.Timestamp.Value.Date;
 
                 WeatherMeasurement wm = new();
                 if (precipMeasurement.DateTime.HasValue && precipMeasurement.DateTime.Value.Date == latestDate)
                     wm.GetDataFromPrecipitationMeasurement(precipMeasurement);
                 if (tempMeasurement.DateTime.HasValue && tempMeasurement.DateTime.Value.Date == latestDate)
                     wm.GetDataFromTemperatureMeasurement(tempMeasurement);
-                if (humidityMeasurement.DateTime.HasValue && humidityMeasurement.DateTime.Value.Date == latestDate)
+                if (humidityMeasurement.Timestamp.HasValue && humidityMeasurement.Timestamp.Value.Date == latestDate)
                     wm.GetDataFromHumidityMeasurement(humidityMeasurement);
 
                 return wm;
