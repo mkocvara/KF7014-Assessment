@@ -56,7 +56,7 @@ services:
       dockerfile: iothumiditysensoremulator/Dockerfile
     restart: on-failure
     environment:
-      TARGET_URL: https://gateway/Humidity
+      TARGET_URL: http://gateway/Humidity
     #depends_on:
     #  humidity-api:
     #    condition: service_healthy
@@ -71,6 +71,8 @@ services:
       context: .
       dockerfile: PercipitationDataCollectionService/Dockerfile
     restart: on-failure
+    environment:
+      RABBITMQ_HOST: clientapp-mq
     ports: # Just for debugging
       - 2080:80
       - 20443:443
@@ -82,6 +84,8 @@ services:
     build:
       context: .
       dockerfile: PrecipitationSensor/Dockerfile
+    environment:
+      TARGET_URL: http://gateway/
     networks:
       - external
 
@@ -102,6 +106,8 @@ services:
     build:
       context: .
       dockerfile: TemperatureAPI.Sensor/Dockerfile
+    environment:
+      TARGET_URL: http://gateway/
     networks:
       - external
 
@@ -131,6 +137,7 @@ services:
     environment:
       GATEWAY_URI: http://gateway
       RABBITMQ_HOST: clientapp-mq
+      MYSQL_URI: server=clientapp-db;database=assignment;user=admin;password=FZHe84jkB54KpwxSkQmiPCznZwYKaq7Zbn34FaKk6rgCgnoSWgZDAmXuqGnyHUj8
       HUMIDITY_MIN: 30
       HUMIDITY_MAX: 90
     networks:
@@ -142,7 +149,30 @@ services:
         - 5672:5672
         - 15672:15672
     networks:
+        - precipitation-microservice
         - clientapp
+
+  clientapp-db:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: FZHe84jkB54KpwxSkQmiPCznZwYKaq7Zbn34FaKk6rgCgnoSWgZDAmXuqGnyHUj8
+      MYSQL_DATABASE: assignment
+    ports: # Just for debugging
+      - 33306:3306
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 100
+    networks:
+      - clientapp
 
 networks:
   humidity-microservice:
