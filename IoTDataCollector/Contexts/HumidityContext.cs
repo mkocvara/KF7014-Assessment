@@ -111,12 +111,12 @@ namespace IoTHumidityDataCollector.Connectors
                 Environment.Exit(0);
             }
 
-            string connectionString = retrieveEnvironmentVariable("MYSQL_URI");
+            string connectionString = "DataSource=humidity.db";
 
             if (connectionString == null)
                 Environment.Exit(0);
             
-            optionsBuilder.UseMySQL(connectionString);
+            optionsBuilder.UseSqlite(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
