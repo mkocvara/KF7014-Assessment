@@ -31,7 +31,7 @@ namespace ClientApp.Data.Repositories
                 // ignore measurements without a date or location, as they cannot be aggregated
                 IEnumerable<PrecipitationMeasurement> pmHasDateAndLoc = precipMeasurements.Where(pm => pm.DateTime.HasValue && pm.Location is not null);
                 IEnumerable<TemperatureMeasurement> tmHasDateAndLoc = tempMeasurements.Where(tm => tm.DateTime.HasValue && tm.Location is not null);
-                IEnumerable<HumidityMeasurement> hmHasDateAndLoc = humidityMeasurements.Where(hm => hm.Timestamp is not null); // TODO fix
+                IEnumerable<HumidityMeasurement> hmHasDateAndLoc = humidityMeasurements.Where(hm => hm.Timestamp.HasValue && hm.Location is not null);
 
 #pragma warning disable CS8629 // DateTime cannot be null here.
                 // where measurements share the same location and date, keep only the most recent
