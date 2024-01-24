@@ -11,10 +11,7 @@ namespace ClientApp.Pages
 
         public IActionResult OnGet()
         {
-            if (/* TODO: User is logged in */ true)
-                return LocalRedirect("/dashboard");
-            else
-                return LocalRedirect("/login");
+            return LocalRedirect("/dashboard");
         }
     }
 }
