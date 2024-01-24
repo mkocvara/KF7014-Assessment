@@ -3,9 +3,7 @@
 @inject IReadOnlyRepository<PrecipitationMeasurement> PrecipitationRepository
 @model int // id of newest measurement with severe risk (0 if none)
 @{
-    IEnumerable<PrecipitationMeasurement> Measurements;
-    Measurements = await PrecipitationRepository.GetLatestInEveryLocation();
-
+    IEnumerable<PrecipitationMeasurement> Measurements = await PrecipitationRepository.GetLatestInEveryLocation();
     PrecipitationMeasurement? SevereMeasurement = null;
     if (Model > 0)
     {

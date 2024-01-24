@@ -1,10 +1,7 @@
 ﻿@using ClientApp.Data;
 @using ClientApp.Data.Repositories;
 @inject IReadOnlyRepository<TemperatureMeasurement> TemperatureRepository
-@inject IHttpClientFactory HttpClientFactory;
 @{
-    HttpClient _httpClient = HttpClientFactory.CreateClient("Gateway");
-
     IEnumerable<TemperatureMeasurement> latestTemperatures = await TemperatureRepository.GetLatestInEveryLocation();
 }
 
