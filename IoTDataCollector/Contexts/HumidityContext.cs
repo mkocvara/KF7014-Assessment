@@ -1,6 +1,8 @@
-﻿using IoTHumidityDataCollector.Models;
+﻿using EasyNetQ;
+using IoTHumidityDataCollector.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Diagnostics.Metrics;
 using System.Security;
 
 namespace IoTHumidityDataCollector.Connectors
@@ -12,12 +14,16 @@ namespace IoTHumidityDataCollector.Connectors
         private int MaximumHumidityPercentageValue;
         private int MinimumHumidityPercentageValue;
 
-        public HumidityContext(DbContextOptions<HumidityContext> options) : base(options)
+        private readonly IBus _eventBus;
+
+        public HumidityContext(DbContextOptions<HumidityContext> options, IBus eventBus) : base(options)
         {
             // Add event subscriptions to check for critical values
             // when items are inserted or updated
             ChangeTracker.StateChanged += CheckForCriticalValues;
             ChangeTracker.Tracked += CheckForCriticalValues;
+
+            _eventBus = eventBus;
         }
 
         // Notification Function. Checks for critical values during created or modified events
@@ -27,10 +33,29 @@ namespace IoTHumidityDataCollector.Connectors
             {
                 if (e.Entry.State != EntityState.Deleted)
                 {
+                    bool isSevere = false;
+
                     if (hr.Percentage >= MaximumHumidityPercentageValue)
+                    {
                         Console.WriteLine($"[ALERT] - ({hr.Id}) Maximum limit reached. Current value: {hr.Percentage} @ {hr.Timestamp} {hr.Latitude}, {hr.Longitude}: Maximum {MaximumHumidityPercentageValue}");
+                        isSevere = true;
+                    }
                     else if (hr.Percentage <= MinimumHumidityPercentageValue)
+                    {
                         Console.WriteLine($"[ALERT] - ({hr.Id}) Minimum limit reached. Current value: {hr.Percentage} @ {hr.Timestamp} {hr.Latitude}, {hr.Longitude}: Minimum {MinimumHumidityPercentageValue}");
+                        isSevere = true;
+                    }
+
+                    // Publish the new measurement's id as a message to the event bus
+                    try
+                    {
+                        if (isSevere)
+                            _eventBus.PubSub.Publish(hr.Id, "Precipitation");
+                    }
+                    catch
+                    {
+                        Console.WriteLine($"Failed to publish message to event bus. Very possibly, RabbitMQ is not running.");
+                    }
                 }
             }
         }

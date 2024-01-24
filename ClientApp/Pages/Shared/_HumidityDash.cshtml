@@ -1,12 +1,12 @@
 ﻿@using ClientApp.Data;
 @using ClientApp.Data.Repositories;
 @inject IReadOnlyRepository<HumidityMeasurement> hRepository;
-@model int
+@model int // id of newest measurement with severe risk (0 if none)
 @{
     IEnumerable<HumidityMeasurement> humidityMeasurements = await hRepository.GetLatestInEveryLocation();
 
-    HumidityMeasurement SevereHMeasurement = null;
-    if(Model > 0)
+    HumidityMeasurement? SevereHMeasurement = null;
+    if (Model > 0)
     {
         SevereHMeasurement = humidityMeasurements.FirstOrDefault(m => m.Id == Model);
     }
@@ -18,7 +18,7 @@
     {
         <div class="alert alert-danger" role="alert">
             <h4 class="alert-heading">Severe Weather Alert!</h4>
-            <p>Severe precipitation has been detected at @SevereHMeasurement.Location (<b>@SevereHMeasurement.Latitude</b>, <b>@SevereHMeasurement.Longitude</b>)</p>
+            <p>Severe humidity has been detected at @SevereHMeasurement.Location (<b>@SevereHMeasurement.Latitude</b>, <b>@SevereHMeasurement.Longitude</b>)</p>
         </div>
     }
 

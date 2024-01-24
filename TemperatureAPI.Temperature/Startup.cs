@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EasyNetQ;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TemperatureAPI.Temperature.Data;
 using TemperatureAPI.Temperature.Models;
@@ -32,6 +33,8 @@ namespace TemperatureAPI.Temperature
                         Version = "v1" 
                     });
             });
+
+            services.AddSingleton<IBus>(RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost"}"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -4,6 +4,7 @@
 @model int // id of newest measurement with severe risk (0 if none)
 @{
     IEnumerable<PrecipitationMeasurement> Measurements = await PrecipitationRepository.GetLatestInEveryLocation();
+
     PrecipitationMeasurement? SevereMeasurement = null;
     if (Model > 0)
     {

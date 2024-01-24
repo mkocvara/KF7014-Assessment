@@ -1,5 +1,6 @@
 using IoTHumidityDataCollector.Connectors;
 using Microsoft.EntityFrameworkCore;
+using EasyNetQ;
 
 Console.WriteLine("Initializing...");
 
@@ -13,9 +14,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<IBus>(RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost"}"));
 builder.Services.AddDbContext<HumidityContext>();
 
 builder.Services.AddApiVersioning();
+
 
 var app = builder.Build();
 

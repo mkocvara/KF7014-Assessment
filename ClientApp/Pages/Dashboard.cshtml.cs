@@ -12,8 +12,8 @@ namespace ClientApp.Pages
         public readonly int DefaultUpdateInterval = 10000; // miliseconds
 
         public static int SeverePrecipitationAlertId { get; set; } = 0;
-        //public bool SevereTemperatureAlertId { get; set; } = false;
-        public int SevereHumidityAlertID { get; set; } = 0;
+        public static int SevereTemperatureAlertId { get; set; } = 0;
+        public static int SevereHumidityAlertId { get; set; } = 0;
 
         public DashboardModel(IBus eventBus)
         {
@@ -31,7 +31,7 @@ namespace ClientApp.Pages
                 try
                 {
                     _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("PrecipitationSevereRisk", HandlePrecipSevereRiskMessage, x => x.WithTopic("Precipitation")));
-                    //_subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
+                    _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("TemperatureSevereRisk", HandleTempSevereRiskMessage, x => x.WithTopic("Temperature")));
                     _subscriptions.Add(_eventBus.PubSub.Subscribe<int>("HumiditySevereRisk", HandleHumiditySevereRiskMessage, x => x.WithTopic("Humidity")));
                 }
                 catch
@@ -84,9 +84,20 @@ namespace ClientApp.Pages
 #endif
         }
 
+        void HandleTempSevereRiskMessage(int message)
+        {
+            SevereTemperatureAlertId = message;
+
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"=== MESSAGE RECEIVED; measurement with ID={message} poses a severe risk! ===");
+            Console.ResetColor();
+#endif
+        }
+
         void HandleHumiditySevereRiskMessage(int message)
         {
-            SevereHumidityAlertID = message;
+            SevereHumidityAlertId = message;
 
 #if DEBUG
             Console.ForegroundColor = ConsoleColor.Blue;

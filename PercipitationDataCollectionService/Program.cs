@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // > Register event bus
-builder.Services.AddSingleton<IBus>(RabbitHutch.CreateBus("host=localhost"));
+builder.Services.AddSingleton<IBus>(RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost"}"));
 
 var app = builder.Build();
 

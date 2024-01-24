@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using EasyNetQ;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Data;
@@ -15,9 +16,11 @@ namespace TemperatureAPI.Temperature.Controllers
     public class TemperatureController : ControllerBase
     {
         private readonly ITemperatureRepository _temperatureRepository;
-        public TemperatureController(ITemperatureRepository temperatureRepository)
+        private readonly IBus _eventBus;
+        public TemperatureController(ITemperatureRepository temperatureRepository, IBus eventBus)
         {
             _temperatureRepository = temperatureRepository;
+            _eventBus = eventBus;
         }
 
         [HttpGet]
@@ -53,11 +56,13 @@ namespace TemperatureAPI.Temperature.Controllers
             String? maxTemperatureString = Environment.GetEnvironmentVariable("MAX_TEMPERATURE");
             String? minTemperatureString = Environment.GetEnvironmentVariable("MIN_TEMPERATURE");
 
+            bool isExtremeWeather = false;
             if (maxTemperatureString is not null && createdEntry.Temperature > Int32.Parse(maxTemperatureString))
             {
                 Console.WriteLine("ALERT!!\nSensor {0} has triggered an Extreme Weather Alert." +
                     "\nRecorded temperature is greater than the maximum threshold: {1} > {2}\n",
                     createdEntry.SensorId, createdEntry.Temperature, Int32.Parse(maxTemperatureString));
+                isExtremeWeather = true;
             }
 
             if (minTemperatureString is not null && createdEntry.Temperature < Int32.Parse(minTemperatureString))
@@ -65,6 +70,18 @@ namespace TemperatureAPI.Temperature.Controllers
                 Console.WriteLine("ALERT!!\nSensor {0} has triggered an Extreme Weather Alert." +
                     "\nRecorded temperature is lower than the minimum threshold: {1} < {2}\n",
                     createdEntry.SensorId, createdEntry.Temperature, Int32.Parse(minTemperatureString));
+                isExtremeWeather = true;
+            }
+
+            // Publish the new measurement's id as a message to the event bus
+            try
+            {
+                if (isExtremeWeather)
+                    _eventBus.PubSub.Publish(createdEntry.Id, "Temperature");
+            }
+            catch
+            {
+                Console.WriteLine($"Failed to publish message to event bus. Very possibly, RabbitMQ is not running.");
             }
 
             // Returns confirmation of creation
