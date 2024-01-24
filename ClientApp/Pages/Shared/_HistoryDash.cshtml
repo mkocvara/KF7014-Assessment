@@ -56,6 +56,9 @@
         <option value="precipitation">Precipitation</option>
         <option value="humidity">Humidity</option>
     </select>
+    <label for="citySelector">Select Location:</label>
+    <select id="citySelector" onchange="updateChart()">
+    </select>
 </div>
 <canvas id="sensorChart" width="400" height="200"></canvas>
 <!-- Include 'chart.js' library and the date adapter -->
@@ -110,18 +113,24 @@
 
     // Update based on the selector element
     function updateChart() {
-        var selector = document.getElementById('dataSelector');
-        var selectedValue = selector.options[selector.selectedIndex].value;
-        var selectedText = selector.options[selector.selectedIndex].text;
+        // Type of collected data
+        var dataSelector = document.getElementById('dataSelector');
+        var dataSelectedValue = dataSelector.options[dataSelector.selectedIndex].value;
+        var dataSelectedText = dataSelector.options[dataSelector.selectedIndex].text;
+
+        // Location
+        var citySelector = document.getElementById('citySelector');
+        var citySelectedValue = citySelector.options[citySelector.selectedIndex].value;
+        var citySelectedText = citySelector.options[citySelector.selectedIndex].text;
 
 
         // Update selectedData based on the user's selection
-        if (selectedValue === 'temperature') {
-            selectedData = fullData.map(m => ({ x: m.dateTime, y: m.temperatureC }));
-        } else if (selectedValue === 'precipitation') {
-            selectedData = fullData.map(m => ({ x: m.dateTime, y: m.precipitationMm }));
-        } else if (selectedValue === 'humidity') {
-            selectedData = fullData.map(m => ({ x: m.dateTime, y: m.humidity }));
+        if (dataSelectedValue === 'temperature') {
+            selectedData = fullData.filter(m => m.location === citySelectedValue).map(m => ({ x: m.dateTime, y: m.temperatureC }));
+        } else if (dataSelectedValue === 'precipitation') {
+            selectedData = fullData.filter(m => m.location === citySelectedValue).map(m => ({ x: m.dateTime, y: m.precipitationMm }));
+        } else if (dataSelectedValue === 'humidity') {
+            selectedData = fullData.filter(m => m.location === citySelectedValue).map(m => ({ x: m.dateTime, y: m.humidity }));
         }
 
         // Clean and sort by date
@@ -136,6 +145,31 @@
         sensorChart.data.datasets[0].label = selectedText;
         sensorChart.update();
     }
+
+    function updateCityOptions() {
+        var citySelector = document.getElementById("citySelector");
+
+        // Clear existing options
+        citySelector.innerHTML = "";
+
+        // Get unique locations from weatherMeasurements
+        var uniqueLocations = [...new Set(fullData.map(m => m.location))];
+
+        // Add options for each unique location
+        uniqueLocations.forEach(function (location, index) {
+            var option = document.createElement("option");
+            option.value = location;
+            option.text = location;
+
+            if (index === 0) {
+                option.selected = true;
+            }
+
+            citySelector.add(option);
+        });
+    }
+
+    updateCityOptions()
 
     updateChart();
 
