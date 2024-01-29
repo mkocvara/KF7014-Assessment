@@ -17,7 +17,7 @@ namespace PrecipitationSensors
         private readonly System.Timers.Timer _timer;
         private DateTime _lastDataSentTime;
         private TimeSpan _dataSendInterval = TimeSpan.FromMinutes(1);
-        private static readonly HttpClient _http = new() { BaseAddress = new Uri("https://localhost:7081") }; // Gateway URI
+        private static readonly HttpClient _http = new() { BaseAddress = new Uri( Environment.GetEnvironmentVariable("TARGET_URL") ?? "https://localhost:7081") }; // Gateway URI
 
         public Sensor(string location, TimeSpan interval)
         {
