@@ -18,8 +18,8 @@ namespace ClientApp.Data.Repositories
         public HumidityRepository(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            HUMIDITY_MIN = int.Parse(Environment.GetEnvironmentVariable("HUMIDITY_MIN"));
-            HUMIDITY_MAX = int.Parse(Environment.GetEnvironmentVariable("HUMIDITY_MAX"));
+            HUMIDITY_MIN = int.Parse(Environment.GetEnvironmentVariable("HUMIDITY_MIN")??"30");
+            HUMIDITY_MAX = int.Parse(Environment.GetEnvironmentVariable("HUMIDITY_MAX")??"90");
         }
 
         public async Task<IEnumerable<HumidityMeasurement>> GetAll()
