@@ -15,8 +15,8 @@ public class WeatherMeasurement
     // Temperature
     public float? TemperatureC { get; set; }
 
-        // Humidity
-        public double? Humidity { get; set; }
+    // Humidity
+    public double? Humidity { get; set; }
 
 
     public WeatherMeasurement() { }
@@ -57,7 +57,7 @@ public class WeatherMeasurement
     public WeatherMeasurement(string? location, DateTime? dateTime, 
                                 float? precipitationMm, float? coverage, float? snowfall, float? snowDepth, bool precipSevere,
                                 float? tempC, 
-                                /*TODO humidity*/ float? humidity)
+                                double? humidity)
     {
         Location = location;
         DateTime = dateTime;
