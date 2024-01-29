@@ -104,8 +104,7 @@ namespace ClientApp.Data.Repositories
             {
                 List<PrecipitationMeasurement> precipMeasurements = (await _precipitationRepository.GetAllByLocation(location)).ToList();
                 List<TemperatureMeasurement> tempMeasurements = (await _temperatureRepository.GetAllByLocation(location)).ToList();
-                // TODO: Get other measurements from other services
-                List<HumidityMeasurement> humidityMeasurements = new();
+                List<HumidityMeasurement> humidityMeasurements = (await _humidityRepository.GetAllByLocation(location)).ToList();
 
                 // ignore measurements without a date, as they cannot be aggregated
                 IEnumerable<PrecipitationMeasurement> pmHasDate = precipMeasurements.Where(pm => pm.DateTime.HasValue);
