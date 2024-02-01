@@ -41,8 +41,8 @@ namespace ClientApp.Test
             WeatherMeasurement target = new();
             HumidityMeasurement hum = new();
             target.Location = hum.Location = "Test";
-            target.DateTime = hum.DateTime = new DateTime(2021, 1, 1);
-            target.Humidity = hum.Humidity = 1.0f;
+            target.DateTime = hum.Timestamp = new DateTime(2021, 1, 1);
+            target.Humidity = hum.Percentage = 1.0f;
 
             WeatherMeasurement test = new();
             test.CopyDataFromHumidityMeasurement(hum);
@@ -94,8 +94,8 @@ namespace ClientApp.Test
             target1.Location = hum.Location = "Test";
             target2.Location = "Test2";
             target1.DateTime = new DateTime(2021, 1, 2);
-            target2.DateTime = hum.DateTime = new DateTime(2021, 1, 1);
-            target2.Humidity = target1.Humidity = hum.Humidity = 1.0f;
+            target2.DateTime = hum.Timestamp = new DateTime(2021, 1, 1);
+            target2.Humidity = target1.Humidity = hum.Percentage = 1.0f;
 
             WeatherMeasurement test = new();
             test.CopyDataFromHumidityMeasurement(hum);
