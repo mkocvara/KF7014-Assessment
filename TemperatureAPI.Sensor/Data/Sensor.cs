@@ -69,7 +69,7 @@ namespace TemperatureAPI.Sensor.Data
 
             try
             {
-                String url = Environment.GetEnvironmentVariable("TARGET_URL") ?? "https://localhost:7081" + "/Temperature";
+                String url = (Environment.GetEnvironmentVariable("TARGET_URL") ?? "https://localhost:7081") + "/Temperature";
                 HttpResponseMessage response = await _client.PostAsync(url, content);
             } catch (Exception ex)
             {
