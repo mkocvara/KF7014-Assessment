@@ -35,9 +35,11 @@ namespace TemperatureAPI.Temperature
             });
 
             services.AddSingleton<IBus>(RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost"}"));
+
+            
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -48,6 +50,12 @@ namespace TemperatureAPI.Temperature
 
             app.UseRouting();
             app.UseAuthorization();
+
+            // Create the database if it is not already created
+            using (IServiceScope scope = app.ApplicationServices.CreateScope())
+            {
+                scope.ServiceProvider.GetService<TemperatureDbContext>()?.Database.EnsureCreated();
+            }
 
             app.UseEndpoints(endpoints =>
             {

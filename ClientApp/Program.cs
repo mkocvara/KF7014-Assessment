@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = Environment.GetEnvironmentVariable("MYSQL_URI") ?? throw new InvalidOperationException("Connection string 'MYSQL_URI' not found.");
+
+string connectionString = Environment.GetEnvironmentVariable("MYSQL_URI") ?? throw new InvalidOperationException("Connection string 'MYSQL_URI' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySQL(connectionString));
 
@@ -82,8 +83,8 @@ using (IServiceScope scope = app.Services.CreateScope())
 {
     DatabaseFacade db = scope.ServiceProvider.GetService<ApplicationDbContext>().Database;
 
-    db.Migrate();
     db.EnsureCreated();
+    db.Migrate();
 }
 
 // Configure the HTTP request pipeline.

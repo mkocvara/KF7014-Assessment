@@ -10,15 +10,17 @@ services:
       HUMIDITY_MIN: 30
       HUMIDITY_MAX: 90
       MYSQL_URI: server=humidity-db;database=assignment;user=admin;password=jKcdpMXzeBY38vokfnQtzfiHFbkHSSxLznMNPBJf9sU3qmTf4NTf95JYqFRHXyRr
+      RABBITMQ_HOST: clientapp-mq
     restart: on-failure
     ports: # Just for debugging
       - 1080:80
       - 10443:443
-    #healthcheck:
-    #  test: curl -f https://localhost/api/v1/Humidity
-    # start_period: 3s
-    #  interval: 3s
-    #  timeout: 3s
+    healthcheck:
+      test: curl -f https://localhost/api/v1/Humidity
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 10
     depends_on:
       humidity-db:
         condition: service_healthy
@@ -45,7 +47,7 @@ services:
       start_period: 3s
       interval: 3s
       timeout: 3s
-      retries: 100
+      retries: 10
     networks:
       - humidity-microservice
 
@@ -57,11 +59,11 @@ services:
     restart: on-failure
     environment:
       TARGET_URL: http://gateway/Humidity
-    #depends_on:
-    #  humidity-api:
-    #    condition: service_healthy
-    #links: 
-    #  - humidity-api
+    depends_on:
+      gateway:
+        condition: service_healthy
+    links: 
+      - gateway
     networks:
       - external
     
@@ -76,6 +78,12 @@ services:
     ports: # Just for debugging
       - 2080:80
       - 20443:443
+    healthcheck:
+      test: curl -f https://localhost/api/Precipitation
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 10
     networks:
       - precipitation-microservice
 
@@ -86,6 +94,11 @@ services:
       dockerfile: PrecipitationSensor/Dockerfile
     environment:
       TARGET_URL: http://gateway/
+    depends_on:
+      gateway:
+        condition: service_healthy
+    links:
+      - gateway
     networks:
       - external
 
@@ -95,9 +108,17 @@ services:
       context: .
       dockerfile: TemperatureAPI.Temperature/Dockerfile
     restart: on-failure
+    environment:
+      RABBITMQ_HOST: clientapp-mq
     ports: # Just for debugging
       - 3080:80
       - 30443:443
+    healthcheck:
+      test: curl -f https://localhost/api/Temperature
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 10
     networks:
       - temperature-microservice
 
@@ -108,6 +129,11 @@ services:
       dockerfile: TemperatureAPI.Sensor/Dockerfile
     environment:
       TARGET_URL: http://gateway/
+    depends_on:
+      gateway:
+        condition: service_healthy
+    links:
+      - gateway
     networks:
       - external
 
@@ -119,6 +145,23 @@ services:
     ports:
       - 8080:80
       - 8443:443
+    healthcheck:
+      test: curl -f https://localhost/
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      humidity-api:
+        condition: service_healthy
+      precipitation-api:
+        condition: service_healthy
+      temperature-api:
+        condition: service_healthy
+    links:
+      - humidity-api
+      - precipitation-api
+      - temperature-api
     networks:
       - external
       - clientapp
@@ -140,6 +183,17 @@ services:
       MYSQL_URI: server=clientapp-db;database=assignment;user=admin;password=FZHe84jkB54KpwxSkQmiPCznZwYKaq7Zbn34FaKk6rgCgnoSWgZDAmXuqGnyHUj8
       HUMIDITY_MIN: 30
       HUMIDITY_MAX: 90
+    depends_on:
+      gateway:
+        condition: service_healthy
+      clientapp-mq:
+        condition: service_healthy
+      clientapp-db:
+        condition: service_healthy
+    links:
+      - gateway
+      - clientapp-mq
+      - clientapp-db
     networks:
       - clientapp
 
@@ -148,7 +202,15 @@ services:
     ports: # Just for debugging
         - 5672:5672
         - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      start_period: 3s
+      interval: 3s
+      timeout: 3s
+      retries: 10
     networks:
+        - humidity-microservice
+        - temperature-microservice
         - precipitation-microservice
         - clientapp
 
@@ -170,7 +232,7 @@ services:
       start_period: 3s
       interval: 3s
       timeout: 3s
-      retries: 100
+      retries: 10
     networks:
       - clientapp
 

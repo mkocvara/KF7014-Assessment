@@ -10,6 +10,39 @@ namespace TemperatureAPI.Sensor.Models
         private readonly List<Data.Sensor> sensors = new();
         private int nextId = 1;
 
+        private static List<string> Locations = new List<string>() {
+            "Newcastle upon Tyne",
+            "Sunderland",
+            "Durham",
+            "Middlesborough",
+            "Liverpool",
+            "Manchester",
+            "London",
+            "Oxford",
+            "Cambridge",
+            "Birmingham",
+            "Canterbury",
+            "Nottingham",
+            "Derby",
+            "Bath",
+            "Worcester",
+            "York",
+            "Stoke-on-Trent",
+            "Leicester",
+            "Sheffield",
+            "Leeds",
+            "Chester",
+            "Exeter",
+            "Carlisle",
+            "Norwich",
+            "Bradford",
+            "Coventry",
+            "Runcorn",
+            "Portsmouth",
+            "Bristol",
+            "Plymouth"
+        };
+
         public SensorRepository()
         {
             init();
@@ -22,20 +55,10 @@ namespace TemperatureAPI.Sensor.Models
 
             try
             {
-                string fileName = "sensors.json";
-                string jsonString = File.ReadAllText(fileName);
-
-                if (string.IsNullOrEmpty(jsonString))
-                    throw new InvalidOperationException("No data was read from the json file.");
-
-                IEnumerable<Data.Sensor.InitData>? initData = JsonSerializer.Deserialize<IEnumerable<Data.Sensor.InitData>>(jsonString);
-
-                if (initData == null || !initData.Any())
-                    throw new InvalidOperationException("No data was deserialized from the json file.");
-
-                foreach (var data in initData.Take(30))
+                Random rng = new();
+                for(int i=0; i<30; i++)
                 {
-                    sensors.Add(new Data.Sensor(nextId++, data.Location));
+                    sensors.Add(new Data.Sensor(nextId++, Locations[rng.Next() % Locations.Count]));
                 }
 
                 Debug.WriteLine("Successfully Deserialized 30 sensors from json!");
@@ -127,6 +150,7 @@ namespace TemperatureAPI.Sensor.Models
 
         // Deserialises sensors.json and adds the sensors to the list of sensors.
         // Returns false if deserialisation fails, true otherwise.
+        /*
         private bool TryDeserialiseJson()
         {
             try
@@ -154,7 +178,7 @@ namespace TemperatureAPI.Sensor.Models
             {
                 return false;
             }
-        }
+        } */ 
     }
 
 

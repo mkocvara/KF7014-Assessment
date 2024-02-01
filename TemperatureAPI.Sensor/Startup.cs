@@ -15,7 +15,9 @@ namespace TemperatureAPI.Sensor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<ISensorRepository, SensorRepository>();
+
+            SensorRepository sensorRepository = new();
+            //services.AddScoped<ISensorRepository, SensorRepository>();
 
             services.AddSwaggerGen(c =>
             {
@@ -29,7 +31,7 @@ namespace TemperatureAPI.Sensor
             {
                 // Code to run when the application has started
                 Console.WriteLine("Application started!");
-                new HttpClient().GetAsync("https://localhost:7081/Sensor");
+               // new HttpClient().GetAsync((Environment.GetEnvironmentVariable("TARGET_URL") ?? "https://localhost:7081") + "/Sensor");
             });
 
             hostApplicationLifetime.ApplicationStopping.Register(() =>

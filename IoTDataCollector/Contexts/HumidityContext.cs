@@ -50,7 +50,7 @@ namespace IoTHumidityDataCollector.Connectors
                     try
                     {
                         if (isSevere)
-                            _eventBus.PubSub.Publish(hr.Id, "Precipitation");
+                            _eventBus.PubSub.Publish(hr.Id, "Humidity");
                     }
                     catch
                     {

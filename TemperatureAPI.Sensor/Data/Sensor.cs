@@ -9,10 +9,7 @@ namespace TemperatureAPI.Sensor.Data
 {
     public class Sensor
     {
-        public struct InitData
-        {
-            public string Location { get; set; }
-        }
+        
 
         public int Id { get; set; }
         public string Description { get; set; } = "";
@@ -20,6 +17,7 @@ namespace TemperatureAPI.Sensor.Data
         private readonly Random _rng = new();
         public Timer? _timer;
         private readonly HttpClient _client = new();
+        
 
         public Sensor(int id, string description, int intervalInMinutes = -1)
         {
@@ -69,8 +67,14 @@ namespace TemperatureAPI.Sensor.Data
                 JsonSerializer.Serialize(temperatureObject),
                 Encoding.UTF8, "application/json");
 
-            String url = "https://localhost:7081/Temperature";
-            HttpResponseMessage response = await _client.PostAsync(url, content);
+            try
+            {
+                String url = Environment.GetEnvironmentVariable("TARGET_URL") ?? "https://localhost:7081" + "/Temperature";
+                HttpResponseMessage response = await _client.PostAsync(url, content);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         // Returns the temperature emulated by the sensor
