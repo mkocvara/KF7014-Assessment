@@ -2,6 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
+RUN apt update && apt install -y curl
 EXPOSE 80
 EXPOSE 443
 
