@@ -21,6 +21,9 @@ namespace TemperatureAPI.Sensor.Data
 
         public Sensor(int id, string description, int intervalInMinutes = -1)
         {
+            //int delay = 10; //seconds
+            //Console.WriteLine($"{id} @ {description} sleeping {delay}s");
+            //Thread.Sleep(delay * 1000);
             Id = id;
             Description = description;
             if (intervalInMinutes < 0)
@@ -71,6 +74,8 @@ namespace TemperatureAPI.Sensor.Data
             {
                 String url = (Environment.GetEnvironmentVariable("TARGET_URL") ?? "https://localhost:7081") + "/Temperature";
                 HttpResponseMessage response = await _client.PostAsync(url, content);
+                Console.WriteLine($"{url}: status {response.StatusCode} with message:");
+                Console.WriteLine(response.Content.ToString());
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
