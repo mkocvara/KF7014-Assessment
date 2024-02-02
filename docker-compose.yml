@@ -15,17 +15,11 @@ services:
     ports: # Just for debugging
       - 1080:80
       - 10443:443
-    healthcheck:
-      test: curl -f https://localhost/api/v1/Humidity
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
     depends_on:
       humidity-db:
         condition: service_healthy
-    links: 
-      - humidity-db
+      clientapp-mq:
+        condition: service_healthy
     networks:
       - humidity-microservice
 
@@ -44,10 +38,10 @@ services:
       - 3306:3306
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 100
     networks:
       - humidity-microservice
 
@@ -61,12 +55,10 @@ services:
       TARGET_URL: http://gateway/Humidity
     depends_on:
       gateway:
-        condition: service_healthy
-    links: 
-      - gateway
+        condition: service_started
     networks:
       - external
-    
+
   precipitation-api:
     image: ${DOCKER_REGISTRY-}precipitationservice
     build:
@@ -78,15 +70,12 @@ services:
     ports: # Just for debugging
       - 2080:80
       - 20443:443
-    healthcheck:
-      test: curl -f https://localhost/api/Precipitation
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
+    depends_on:
+      clientapp-mq:
+        condition: service_healthy
     networks:
       - precipitation-microservice
-
+  
   precipitation-sensor:
     image: ${DOCKER_REGISTRY-}precipitationsensors
     build:
@@ -96,9 +85,7 @@ services:
       TARGET_URL: http://gateway/
     depends_on:
       gateway:
-        condition: service_healthy
-    links:
-      - gateway
+        condition: service_started
     networks:
       - external
 
@@ -113,12 +100,9 @@ services:
     ports: # Just for debugging
       - 3080:80
       - 30443:443
-    healthcheck:
-      test: curl -f https://localhost/api/Temperature
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
+    depends_on:
+      clientapp-mq:
+        condition: service_healthy
     networks:
       - temperature-microservice
 
@@ -128,12 +112,10 @@ services:
       context: .
       dockerfile: TemperatureAPI.Sensor/Dockerfile
     environment:
-      TARGET_URL: http://gateway/
+      TARGET_URL: http://gateway
     depends_on:
       gateway:
-        condition: service_healthy
-    links:
-      - gateway
+        condition: service_started
     networks:
       - external
 
@@ -145,23 +127,13 @@ services:
     ports:
       - 8080:80
       - 8443:443
-    healthcheck:
-      test: curl -f https://localhost/
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
     depends_on:
       humidity-api:
-        condition: service_healthy
+        condition: service_started
       precipitation-api:
-        condition: service_healthy
+        condition: service_started
       temperature-api:
-        condition: service_healthy
-    links:
-      - humidity-api
-      - precipitation-api
-      - temperature-api
+        condition: service_started
     networks:
       - external
       - clientapp
@@ -185,15 +157,11 @@ services:
       HUMIDITY_MAX: 90
     depends_on:
       gateway:
-        condition: service_healthy
+        condition: service_started
       clientapp-mq:
         condition: service_healthy
       clientapp-db:
         condition: service_healthy
-    links:
-      - gateway
-      - clientapp-mq
-      - clientapp-db
     networks:
       - clientapp
 
@@ -204,10 +172,10 @@ services:
         - 15672:15672
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 100
     networks:
         - humidity-microservice
         - temperature-microservice
@@ -229,10 +197,10 @@ services:
       - 33306:3306
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
-      start_period: 3s
-      interval: 3s
-      timeout: 3s
-      retries: 10
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 100
     networks:
       - clientapp
 
