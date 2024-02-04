@@ -3,13 +3,22 @@
 @inject IReadOnlyRepository<WeatherMeasurement> AggregateRepository
 @{
     IEnumerable<WeatherMeasurement> Measurements;
-    Measurements = await AggregateRepository.GetLatestInEveryLocation();
+    Measurements = await AggregateRepository.GetAll();
 }
 
 @if (Measurements.Any())
 {
-    <p>Latest measurements from all locations. If multiple measurements have been taken in the same location in one day, only the latest from that day are used.</p>
-    <table class="table table-striped table-sm">
+    <p>Measurements from all available locations by day. If multiple of the same kind of measurement have been taken in the same location in one day, only the latest from that day are used.</p>
+    <select id="date-select" class="form-select mb-2" onchange="updateTable()">
+        @{
+            var dates = Measurements.Select(m => m.DateTime.Value.Date).Distinct().OrderDescending();
+            foreach (DateTime date in dates)
+            {
+                <option value="@date.ToShortDateString()">@date.ToShortDateString()</option>
+            }
+        }
+    </select>
+    <table class="table table-sm">
         <thead>
             <tr>
                 <th scope="col">Location</th>
@@ -28,7 +37,7 @@
         <tbody>
             @foreach (WeatherMeasurement measurement in Measurements.OrderBy(m => m.Location))
             {
-                <tr class="">
+                <tr class="measurement @(measurement.DateTime.HasValue ? "mDate" + measurement.DateTime.Value.ToShortDateString() : "")">
                     <td>@measurement.Location</td>
                     <td>@(measurement.DateTime.HasValue ? measurement.DateTime.Value.ToShortDateString() : "")</td>
 
@@ -38,11 +47,11 @@
                     <td class=@riskClass>@measurement.Snowfall</td>
                     <td class=@riskClass>@measurement.SnowDepth</td>
 
-                    @{/*riskClass = measurement.PrecipitationSevereRisk ? "\"text-danger fw-bold\"" : "";*/}
+                    @{/*riskClass = measurement.TemperatureSevereRisk ? "\"text-danger fw-bold\"" : "";*/}
                     <td @* class=@riskClass *@>@measurement.TemperatureC</td>
 
-                    @{/*riskClass = measurement.PrecipitationSevereRisk ? "\"text-danger fw-bold\"" : "";*/}
-                    <td @* class=@riskClass *@>@(measurement.Humidity.HasValue? measurement.Humidity.Value.ToString("F"):"Not Available")</td>
+                    @{/*riskClass = measurement.HumiditySevereRisk ? "\"text-danger fw-bold\"" : "";*/}
+                    <td @* class=@riskClass *@>@(measurement.Humidity.HasValue ? measurement.Humidity.Value.ToString("F") : "")</td>
                 </tr>
             }
         </tbody>
@@ -52,3 +61,23 @@ else
 {
     <p><i>No measurements found.</i></p>
 }
+
+<script>
+    function updateTable() {
+        var date = document.querySelector("select#date-select").value;
+        console.log(date);
+        var rows = document.querySelectorAll("tr");
+        rows.forEach(row => {
+            if (row.classList.contains("measurement")) {
+                if (row.classList.contains("mDate" + date)) {
+                    row.style.display = "table-row";
+                }
+                else {
+                    row.style.display = "none";
+                }
+            }
+        });
+    }
+
+    updateTable();
+</script>

@@ -14,6 +14,7 @@
         <option value="30000">30 seconds</option>
         <option value="60000">1 minute</option>
         <option value="300000">5 minutes</option>
+        <option value="3600000">1 hour</option>
     </select>
 </div>
 <hr />
@@ -51,12 +52,12 @@
         $("#precipitation-dashboard").empty();
         $("#temperature-dashboard").empty();
         $("#humidity-dashboard").empty();
-        $("#aggregate-dashboard").empty();
+        //$("#aggregate-dashboard").empty();
 
         $("#precipitation-dashboard").load("/dashboard?handler=PrecipitationDash");
         $("#temperature-dashboard").load("/dashboard?handler=TemperatureDash");
         $("#humidity-dashboard").load("/dashboard?handler=HumidityDash");
-        $("#aggregate-dashboard").load("/dashboard?handler=AggregateDash");
+        //$("#aggregate-dashboard").load("/dashboard?handler=AggregateDash");
         //$("#history-dashboard").load("/dashboard?handler=HistoryDash");
     }
 
