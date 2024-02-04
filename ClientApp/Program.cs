@@ -87,7 +87,8 @@ using (IServiceScope scope = app.Services.CreateScope())
 
     db.EnsureCreated();
     db.Migrate();
-}
+    db.EnsureCreated();
+}*/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
