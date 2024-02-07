@@ -52,7 +52,7 @@ namespace ClientApp.Data.Repositories
                     IEnumerable<TemperatureMeasurement> onePerDay = group.GroupBy(tm => tm.DateTime.Value.Date)
                                                                            .Select(g => g.OrderBy(tm => tm.DateTime)
                                                                                          .Last());
-                    tempMeasurementsFiltered.AddRange(group);
+                    tempMeasurementsFiltered.AddRange(onePerDay);
                 }
 
                 IEnumerable<IGrouping<string?, HumidityMeasurement>> hmByLocation = hmHasDateAndLoc.GroupBy(hm => hm.Location);
@@ -62,7 +62,7 @@ namespace ClientApp.Data.Repositories
                     IEnumerable<HumidityMeasurement> onePerDay = group.GroupBy(hm => hm.Timestamp.Value.Date)
                                                                            .Select(g => g.OrderBy(hm => hm.Timestamp)
                                                                                          .Last());
-                    humidityMeasurementsFiltered.AddRange(group);
+                    humidityMeasurementsFiltered.AddRange(onePerDay);
                 }
 
                 // full outer join measurements on date and location to create aggregate measurements
