@@ -34,7 +34,7 @@
         <tbody>
             @foreach (var temperature in latestTemperatures)
             {
-                <tr>
+                <tr class="@(temperature.Temperature < -5 ? "text-danger fw-bold" : "") @(temperature.Temperature > 32 ? "text-danger fw-bold" : "")">
                     <td>@temperature.SensorID</td>
                     <td>@temperature.Location</td>
                     <td>@temperature.Temperature</td>

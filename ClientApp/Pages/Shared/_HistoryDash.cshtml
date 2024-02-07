@@ -81,49 +81,49 @@
 
     var fullData = @Json.Serialize(measurements.ToList());
     console.log(`FULL DATA:`);
-    console.log(fullData)
+    console.log(fullData);
 
     var selectedData = {};
 
     // Get the canvas element and create a chart
-    var ctx = document.getElementById('sensorChart').getContext('2d');
+    var ctx = document.getElementById("sensorChart").getContext("2d");
     var sensorChart = new Chart(ctx, {
-        type: 'line', // Chart type (bar, line, etc.)
+        type: "line", // Chart type (bar, line, etc.)
         data: {
             // labels: selectedDates.map(date => new Date(date).toLocaleDateString()),
             datasets: [
                 {
-                    label: 'Temperature',
+                    label: "Temperature",
                     data: selectedData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    borderColor: "rgba(75, 192, 192, 1)",
                     borderWidth: 1,
-                    showLine: true
-                }
+                    showLine: true,
+                },
             ],
         },
         options: {
             plugins: {
                 title: {
                     display: true,
-                    text: 'No Data Available',
+                    text: "No Data Available",
                     font: {
-                        size: 18
-                    }
-                }
+                        size: 18,
+                    },
+                },
             },
             scales: {
                 x: {
-                    type: 'time', // Specify x-axis type as time
+                    type: "time", // Specify x-axis type as time
                     time: {
-                        unit: 'day' // Display one label per day
+                        unit: "day", // Display one label per day
                     },
                 },
                 y: {
-                    beginAtZero: true
-                }
-            }
-        }
+                    beginAtZero: true,
+                },
+            },
+        },
     });
 
     function compareDates(a, b) {
@@ -136,11 +136,18 @@
             .reduce((acc, curr) => {
                 // Selects the closest data point to midday
                 const date = new Date(curr.dateTime);
-                const midday = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
-                console.log("Before Condition: ", date);
+                const midday = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate(),
+                    12,
+                    0,
+                    0
+                );
+                // console.log("Before Condition: ", date);
 
                 if (reduceCondition(curr)) {
-                    console.log("After Condition: ", date);
+                    // console.log("After Condition: ", date);
                     const existingEntryIndex = acc.findIndex((entry) => {
                         const dateInAcc = new Date(entry.dateTime);
                         return dateInAcc.toDateString() === date.toDateString();
@@ -168,23 +175,63 @@
 
         console.log("New Data: ", newData);
 
+        if (newData.length > 0) {
+            var firstDate = new Date(newData[0].dateTime);
+            var lastDate = new Date(newData[newData.length - 1].dateTime);
+
+            document.getElementById("startDate").min = firstDate
+                .toISOString()
+                .split("T")[0];
+            document.getElementById("startDate").max = lastDate
+                .toISOString()
+                .split("T")[0];
+
+            firstDate.setDate(firstDate.getDate() + 1);
+            lastDate.setDate(lastDate.getDate() + 1);
+
+            document.getElementById("endDate").min = firstDate
+                .toISOString()
+                .split("T")[0];
+            document.getElementById("endDate").max = lastDate
+                .toISOString()
+                .split("T")[0];
+        } else {
+            document.getElementById("startDate").value = "";
+            document.getElementById("endDate").value = "";
+        }
+
         return newData.filter((m) => {
             // If there's a date selection, filters accordingly, otherwise sets the selection to the min and max of the selected data
             const date = new Date(m.dateTime);
-            if (document.getElementById("startDate").value == '') {
-                document.getElementById("startDate").value = newData[0].dateTime.split('T')[0];
-                document.getElementById("endDate").value = newData[newData.length - 1].dateTime.split('T')[0];
+            if (
+                document.getElementById("startDate").value == "" ||
+                document.getElementById("endDate").value == ""
+            ) {
+                document.getElementById("startDate").value =
+                    newData[0].dateTime.split("T")[0];
+
+                // Rounds the date up to the next day
+                console.log("LastDate\n", lastDate);
+                document.getElementById("endDate").value = lastDate
+                    .toISOString()
+                    .split("T")[0];
             }
-            const startDate = new Date(document.getElementById("startDate").value);
+            const startDate = new Date(
+                document.getElementById("startDate").value
+            );
+            // EndDate
             const endDate = new Date(document.getElementById("endDate").value);
 
-            return date >= startDate && date <= endDate;
+            console.log("Dates:", startDate, date, endDate);
+            console.log("Comparison: ", date >= startDate, date < endDate);
+
+            return date >= startDate && date < endDate;
         });
     }
 
-    function updateAndReset(){
-        document.getElementById("startDate").value = '';
-        document.getElementById("endDate").value = '';
+    function updateAndReset() {
+        document.getElementById("startDate").value = "";
+        document.getElementById("endDate").value = "";
         updateChart();
     }
 
@@ -193,34 +240,55 @@
         console.log("Updating chart");
 
         // Type of collected data
-        var dataSelector = document.getElementById('dataSelector');
-        var dataSelectedValue = dataSelector.options[dataSelector.selectedIndex].value;
-        var dataSelectedText = dataSelector.options[dataSelector.selectedIndex].text;
+        var dataSelector = document.getElementById("dataSelector");
+        var dataSelectedValue =
+            dataSelector.options[dataSelector.selectedIndex].value;
+        var dataSelectedText =
+            dataSelector.options[dataSelector.selectedIndex].text;
 
         // Location
-        var citySelector = document.getElementById('citySelector');
-        var citySelectedValue = citySelector.options[citySelector.selectedIndex].value;
-        var citySelectedText = citySelector.options[citySelector.selectedIndex].text;
+        var citySelector = document.getElementById("citySelector");
+        var citySelectedValue =
+            citySelector.options[citySelector.selectedIndex].value;
+        var citySelectedText =
+            citySelector.options[citySelector.selectedIndex].text;
 
         const startDate = new Date(document.getElementById("startDate").value);
         const endDate = new Date(document.getElementById("endDate").value);
 
-
         // Update selectedData based on the user's selection
-        if (dataSelectedValue === 'temperature') {
-            selectedData = handleData(citySelectedValue, (dataPoint) => (dataPoint.temperatureC !== undefined && dataPoint.temperatureC !== '' && dataPoint.temperatureC !== null)).map(m => ({ x: m.dateTime, y: m.temperatureC }));
-        } else if (dataSelectedValue === 'precipitation') {
-            selectedData = handleData(citySelectedValue, (dataPoint) => (dataPoint.precipitationMm !== undefined && dataPoint.precipitationMm !== '' && dataPoint.precipitationMm !== null)).map(m => ({ x: m.dateTime, y: m.precipitationMm }));
-        } else if (dataSelectedValue === 'humidity') {
-            selectedData = handleData(citySelectedValue, (dataPoint) => (dataPoint.humidity !== undefined && dataPoint.humidity !== '' && dataPoint.humidity !== null)).map(m => ({ x: m.dateTime, y: m.humidity }));
+        if (dataSelectedValue === "temperature") {
+            selectedData = handleData(
+                citySelectedValue,
+                (dataPoint) =>
+                    dataPoint.temperatureC !== undefined &&
+                    dataPoint.temperatureC !== "" &&
+                    dataPoint.temperatureC !== null
+            ).map((m) => ({ x: m.dateTime, y: m.temperatureC }));
+        } else if (dataSelectedValue === "precipitation") {
+            selectedData = handleData(
+                citySelectedValue,
+                (dataPoint) =>
+                    dataPoint.precipitationMm !== undefined &&
+                    dataPoint.precipitationMm !== "" &&
+                    dataPoint.precipitationMm !== null
+            ).map((m) => ({ x: m.dateTime, y: m.precipitationMm }));
+        } else if (dataSelectedValue === "humidity") {
+            selectedData = handleData(
+                citySelectedValue,
+                (dataPoint) =>
+                    dataPoint.humidity !== undefined &&
+                    dataPoint.humidity !== "" &&
+                    dataPoint.humidity !== null
+            ).map((m) => ({ x: m.dateTime, y: m.humidity }));
         }
 
         // Clean and sort by date
-        selectedData.filter(m => m.x !== null && m.y !== null);
+        selectedData.filter((m) => m.x !== null && m.y !== null);
         selectedData.sort(compareDates);
 
         console.log(`SelectedData Sorted:`);
-        console.log(selectedData)
+        console.log(selectedData);
 
         if (selectedData.length === 0) {
             sensorChart.options.plugins.title.display = true;
@@ -235,6 +303,7 @@
     }
 
     function initSelectors() {
+        console.log("INITIALISE SELECTOR!!");
         // Init CitySelector
         var citySelector = document.getElementById("citySelector");
 
@@ -242,7 +311,7 @@
         citySelector.innerHTML = "";
 
         // Get unique locations from weatherMeasurements
-        var uniqueLocations = [...new Set(fullData.map(m => m.location))];
+        var uniqueLocations = [...new Set(fullData.map((m) => m.location))].sort();
 
         // Add options for each unique location
         uniqueLocations.forEach(function (location, index) {
@@ -255,44 +324,37 @@
             }
 
             citySelector.add(option);
-
         });
 
         // Init date input
         // Select the type of data
-        var selectedData = document.getElementById("dataSelector").value.toLowerCase();
+        var selectedData = document
+            .getElementById("dataSelector")
+            .value.toLowerCase();
         if (selectedData == "temperature") {
-            var reduceConditionfun = (dataPoint) => (dataPoint.temperatureC !== undefined && dataPoint.temperatureC !== '' && dataPoint.temperatureC !== null);
+            var reduceConditionfun = (dataPoint) =>
+                dataPoint.temperatureC !== undefined &&
+                dataPoint.temperatureC !== "" &&
+                dataPoint.temperatureC !== null;
         } else if (selectedData == "precipitation") {
-            var reduceConditionfun = (dataPoint) => (dataPoint.precipitationMm !== undefined && dataPoint.precipitationMm !== '' && dataPoint.precipitationMm !== null);
+            var reduceConditionfun = (dataPoint) =>
+                dataPoint.precipitationMm !== undefined &&
+                dataPoint.precipitationMm !== "" &&
+                dataPoint.precipitationMm !== null;
         } else if (selectedData == "humidity") {
-            var reduceConditionfun = (dataPoint) => (dataPoint.humidity !== undefined && dataPoint.humidity !== '' && dataPoint.humidity !== null);
+            var reduceConditionfun = (dataPoint) =>
+                dataPoint.humidity !== undefined &&
+                dataPoint.humidity !== "" &&
+                dataPoint.humidity !== null;
         }
 
-        // Find the minimum and maximum dates in the dataset
-        const minDate = new Date(Math.min(...handleData(uniqueLocations[0], reduceConditionfun).map(data => new Date(data.dateTime))));
-        const maxDate = new Date(Math.max(...handleData(uniqueLocations[0], reduceConditionfun).map(data => new Date(data.dateTime))));
-
-        console.log("Min date: ", minDate, " - Max date: ", maxDate);
-
-        // Format the dates to YYYY-MM-DD (required by the input[type="date"] element)
-        if (!isNaN(minDate) && !isNaN(maxDate)){
-            const minDateString = minDate.toISOString().split('T')[0];
-            const maxDateString = maxDate.toISOString().split('T')[0];
-
-            // Set the min and max attributes of the date input elements
-            document.getElementById("startDate").min = minDateString;
-            document.getElementById("startDate").max = maxDateString;
-            document.getElementById("endDate").min = minDateString;
-            document.getElementById("endDate").max = maxDateString;
-
-            // Initialize the value of the date input elements to the min and max dates
-            document.getElementById("startDate").value = minDateString;
-            document.getElementById("endDate").value = maxDateString;
-        }
+        // This updates the date selectors
+        handleData(uniqueLocations[0], reduceConditionfun).map(
+            (data) => new Date(data.dateTime)
+        );
     }
 
-    initSelectors()
+    initSelectors();
 
     updateChart();
 
