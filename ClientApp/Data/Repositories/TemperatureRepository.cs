@@ -1,4 +1,6 @@
 ﻿using System.Net.Http;
+using static System.Net.WebRequestMethods;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ClientApp.Data.Repositories
 {
@@ -12,12 +14,17 @@ namespace ClientApp.Data.Repositories
             _httpClientFactory = HttpClientFactory;
         }
 
+        public async Task<List<TemperatureMeasurement>?> fetch(HttpClient http, string endpoint){
+            return (await http.GetFromJsonAsync<IEnumerable<TemperatureMeasurement.TemperatureData>>(endpoint))
+                ?.Select(data => new TemperatureMeasurement(data))?.ToList();
+        }
+
         public async Task<IEnumerable<TemperatureMeasurement>> GetAll()
         {
             try
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                IEnumerable<TemperatureMeasurement>? measurements = await http.GetFromJsonAsync<IEnumerable<TemperatureMeasurement>>("/Temperature/History");
+                IEnumerable<TemperatureMeasurement>? measurements = await fetch(http, "/Temperature/History");
 
                 if (measurements == null)
                     return new List<TemperatureMeasurement>();
@@ -36,7 +43,7 @@ namespace ClientApp.Data.Repositories
             try
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                List<TemperatureMeasurement>? measurements = await http.GetFromJsonAsync<List<TemperatureMeasurement>>($"/Temperature/History");
+                List<TemperatureMeasurement>? measurements = (await fetch(http, "/Temperature/History"));
 
                 if (measurements == null)
                     return new List<TemperatureMeasurement>();
@@ -55,7 +62,7 @@ namespace ClientApp.Data.Repositories
             try
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                TemperatureMeasurement? measurement = await http.GetFromJsonAsync<TemperatureMeasurement>($"/Temperature/{id}");
+                TemperatureMeasurement? measurement = new TemperatureMeasurement(await http.GetFromJsonAsync<TemperatureMeasurement.TemperatureData>($"/Temperature/{id}"));
                 return measurement;
             }
             catch (Exception e)
@@ -70,7 +77,7 @@ namespace ClientApp.Data.Repositories
             try
             {
                 HttpClient http = _httpClientFactory.CreateClient("Gateway");
-                List<TemperatureMeasurement>? measurements = await http.GetFromJsonAsync<List<TemperatureMeasurement>>($"/Temperature");
+                List<TemperatureMeasurement>? measurements = await fetch(http, "/Temperature");
                 if (measurements == null)
                     return null;
 
@@ -90,7 +97,7 @@ namespace ClientApp.Data.Repositories
             try
             {
                 HttpClient httpClient = _httpClientFactory.CreateClient("Gateway");
-                return await httpClient.GetFromJsonAsync<List<TemperatureMeasurement>>("/Temperature") ?? new List<TemperatureMeasurement>();
+                return await fetch(httpClient, "/Temperature") ?? new List<TemperatureMeasurement>();
             }
             catch (Exception e)
             {
